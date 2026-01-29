@@ -237,6 +237,22 @@ button {
   line-height: 1.5;
 }
 
+.credential-card {
+  background: rgba(255, 255, 255, 0.85);
+  border-radius: var(--radius-md);
+  padding: 16px;
+  border: 1px solid rgba(27, 43, 42, 0.12);
+  font-size: 0.9rem;
+  color: var(--ink-soft);
+}
+
+.credential-card ul {
+  margin: 10px 0 0;
+  padding-left: 18px;
+  display: grid;
+  gap: 6px;
+}
+
 .portrait-card {
   background: rgba(255, 255, 255, 0.9);
   border-radius: var(--radius-md);

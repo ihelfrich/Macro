@@ -10,8 +10,8 @@ const DEFAULT_CONFIG = {
 
 const DEFAULT_VOICE = {
   name: "Dr. Ian Helfrich",
-  tagline: "Macro strategist · Applied econometrics",
-  voiceLine: "We trade regimes, not headlines.",
+  tagline: "Chief Research Economist · Geospatial trade + macro systems",
+  voiceLine: "Regimes beat headlines. Structure beats noise.",
   tone: "direct, decisive, data-first"
 };
 
@@ -164,6 +164,12 @@ const elements = {
   transactionSelect: document.getElementById("transactionSelect"),
   transactionChips: Array.from(document.querySelectorAll("#transactionChips .chip")),
   transactionOutput: document.getElementById("transactionOutput"),
+  prodA: document.getElementById("prodA"),
+  prodK: document.getElementById("prodK"),
+  prodL: document.getElementById("prodL"),
+  prodAlpha: document.getElementById("prodAlpha"),
+  prodOutput: document.getElementById("prodOutput"),
+  prodPerWorker: document.getElementById("prodPerWorker"),
   vaAgSales: document.getElementById("vaAgSales"),
   vaAgInputs: document.getElementById("vaAgInputs"),
   vaManSales: document.getElementById("vaManSales"),
@@ -210,7 +216,10 @@ const elements = {
   savT: document.getElementById("savT"),
   savPrivate: document.getElementById("savPrivate"),
   savPublic: document.getElementById("savPublic"),
-  savNational: document.getElementById("savNational")
+  savNational: document.getElementById("savNational"),
+  longRunGrowth: document.getElementById("longRunGrowth"),
+  latestGrowth: document.getElementById("latestGrowth"),
+  growthVol: document.getElementById("growthVol")
 };
 
 elements.weightInputs = Array.from(document.querySelectorAll("[data-weight]"));
@@ -440,6 +449,8 @@ function initStudio() {
   renderChocolate();
   renderRateShock();
   renderSavings();
+  renderProduction();
+  renderLongRunGrowth();
 }
 
 function parseHeaders(value) {
@@ -587,6 +598,9 @@ function wireStudioEvents() {
 
   const savingsInputs = [elements.savY, elements.savC, elements.savG, elements.savT];
   savingsInputs.forEach((input) => input && input.addEventListener("input", renderSavings));
+
+  const prodInputs = [elements.prodA, elements.prodK, elements.prodL, elements.prodAlpha];
+  prodInputs.forEach((input) => input && input.addEventListener("input", renderProduction));
 }
 
 function startClock() {
@@ -615,6 +629,7 @@ async function refreshData() {
   renderRegimeMap();
   renderCharts();
   renderTable();
+  renderLongRunGrowth();
   if (state.activeQuestionId) {
     renderDeepDive(state.activeQuestionId);
   }
@@ -1154,6 +1169,72 @@ function renderSavings() {
   if (elements.savPrivate) elements.savPrivate.textContent = utils.formatNumber(privateSavings, 2);
   if (elements.savPublic) elements.savPublic.textContent = utils.formatNumber(publicSavings, 2);
   if (elements.savNational) elements.savNational.textContent = utils.formatNumber(nationalSavings, 2);
+}
+
+function renderProduction() {
+  if (!elements.prodA) return;
+  const num = (input) => Number(input?.value) || 0;
+  const a = num(elements.prodA);
+  const k = num(elements.prodK);
+  const l = num(elements.prodL);
+  const alpha = utils.clamp(Number(elements.prodAlpha?.value) || 0.33, 0.05, 0.95);
+
+  const output = a * Math.pow(k, alpha) * Math.pow(l, 1 - alpha);
+  const outputPerWorker = l ? output / l : 0;
+
+  if (elements.prodOutput) elements.prodOutput.textContent = utils.formatNumber(output, 2);
+  if (elements.prodPerWorker) elements.prodPerWorker.textContent = utils.formatNumber(outputPerWorker, 2);
+}
+
+function renderLongRunGrowth() {
+  const series = state.series.gdp || [];
+  if (!elements.longRunGrowth || !elements.latestGrowth || !elements.growthVol) return;
+  if (!series.length) {
+    elements.longRunGrowth.textContent = "Connect GDP series";
+    elements.latestGrowth.textContent = "--";
+    elements.growthVol.textContent = "--";
+    return;
+  }
+
+  const latest = utils.latest(series);
+  elements.latestGrowth.textContent = `${utils.formatNumber(latest.value, 2)}%`;
+
+  const pointsPerYear = estimatePointsPerYear(series);
+  const needed20 = Math.round(pointsPerYear * 20);
+  const needed10 = Math.round(pointsPerYear * 10);
+
+  if (series.length < needed20 || needed20 === 0) {
+    elements.longRunGrowth.textContent = "Need ~20 years of GDP history";
+  } else {
+    const slice20 = series.slice(-needed20);
+    const avg20 = slice20.reduce((sum, point) => sum + point.value, 0) / slice20.length;
+    elements.longRunGrowth.textContent = `${utils.formatNumber(avg20, 2)}%`;
+  }
+
+  if (series.length < needed10 || needed10 === 0) {
+    elements.growthVol.textContent = "Need ~10 years of history";
+  } else {
+    const slice10 = series.slice(-needed10);
+    const mean = slice10.reduce((sum, point) => sum + point.value, 0) / slice10.length;
+    const variance =
+      slice10.reduce((sum, point) => sum + Math.pow(point.value - mean, 2), 0) / slice10.length;
+    const std = Math.sqrt(variance);
+    elements.growthVol.textContent = `${utils.formatNumber(std, 2)} pts`;
+  }
+}
+
+function estimatePointsPerYear(series) {
+  if (!series || series.length < 2) return 0;
+  const recent = series.slice(-10);
+  const deltas = [];
+  for (let i = 1; i < recent.length; i += 1) {
+    const delta = recent[i].t - recent[i - 1].t;
+    if (Number.isFinite(delta) && delta > 0) deltas.push(delta);
+  }
+  if (!deltas.length) return 0;
+  const avgDeltaDays = deltas.reduce((sum, val) => sum + val, 0) / deltas.length / (1000 * 60 * 60 * 24);
+  if (!avgDeltaDays) return 0;
+  return utils.clamp(Math.round(365 / avgDeltaDays), 1, 365);
 }
 
 function buildShiftNarrative() {

@@ -58,7 +58,7 @@
         <div class="hero-right">
           <div class="portrait-card">
             <div class="portrait-frame">
-              <img id="ianPortrait" src="assets/ian-helfrich.jpg" alt="Dr. Ian Helfrich" />
+              <img id="ianPortrait" src="assets/ian-helfrich.png" alt="Dr. Ian Helfrich" />
               <div class="portrait-placeholder" id="ianPlaceholder">IH</div>
             </div>
             <div class="portrait-meta">
@@ -75,6 +75,14 @@
             <div class="insight" id="heroInsight">Connect your APIs to generate live commentary.</div>
             <div class="insight" id="heroShift">No data yet. Using fallback mock series.</div>
             <div class="insight" id="heroScenario">Scenario overrides: none.</div>
+          </div>
+          <div class="credential-card">
+            <div class="label">About Ian</div>
+            <ul>
+              <li>Ph.D. Economics, Georgia Tech · international trade + geospatial economics</li>
+              <li>Instructor of record for economics, econometrics, and data science</li>
+              <li>Focus: quantitative analytics, policy impact, and macro regime mapping</li>
+            </ul>
           </div>
         </div>
       </section>
@@ -241,6 +249,30 @@
             <div class="footnote">Tap a transaction to see GDP components and nuance.</div>
           </div>
 
+          <div class="card studio-card">
+            <div class="label">Production Function Lab</div>
+            <div class="mini-table">
+              <div class="mini-row">
+                <span>Technology (A)</span>
+                <input type="number" id="prodA" value="1.0" step="0.1" />
+              </div>
+              <div class="mini-row">
+                <span>Capital (K)</span>
+                <input type="number" id="prodK" value="100" />
+              </div>
+              <div class="mini-row">
+                <span>Labor (L)</span>
+                <input type="number" id="prodL" value="50" />
+              </div>
+              <div class="mini-row">
+                <span>Capital share (α)</span>
+                <input type="number" id="prodAlpha" value="0.35" step="0.05" min="0.1" max="0.9" />
+              </div>
+            </div>
+            <div class="output-row">Output (Y): <span id="prodOutput">--</span></div>
+            <div class="output-row">Output per worker: <span id="prodPerWorker">--</span></div>
+          </div>
+
           <div class="card studio-card wide">
             <div class="label">National Accounts Lab</div>
             <div class="accounts-grid">
@@ -392,6 +424,14 @@
             <div class="output-row">Private savings: <span id="savPrivate">--</span></div>
             <div class="output-row">Public savings: <span id="savPublic">--</span></div>
             <div class="output-row">National savings: <span id="savNational">--</span></div>
+          </div>
+
+          <div class="card studio-card">
+            <div class="label">Long-Run Growth Tracker</div>
+            <div class="footnote">Uses live GDP series when connected.</div>
+            <div class="output-row">20y average growth: <span id="longRunGrowth">--</span></div>
+            <div class="output-row">Latest YoY growth: <span id="latestGrowth">--</span></div>
+            <div class="output-row">Volatility (10y): <span id="growthVol">--</span></div>
           </div>
         </div>
       </section>

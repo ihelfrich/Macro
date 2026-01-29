@@ -40,6 +40,8 @@ Interactive labs for:
 - Nominal vs real GDP + deflator
 - Interest rate transmission
 - Savings calculator
+- Production function lab
+- Long-run growth tracker (uses live GDP)
 
 ## Configure data sources
 Edit `data/sources.js` to match your API paths and series IDs.
