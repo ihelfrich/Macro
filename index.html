@@ -1,0 +1,538 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Macro Signal Room · Dr. Ian Helfrich</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="brand">
+        <div class="brand-mark"></div>
+        <div>
+          <div>Macro Signal Room</div>
+          <div style="font-size: 0.85rem; color: var(--ink-soft)">Dr. Ian Helfrich · Live macro diagnostics</div>
+        </div>
+      </div>
+      <div class="header-meta">
+        <span class="live-pill"><span class="live-dot"></span>Live</span>
+        <span id="clock">--:--</span>
+        <button class="btn" id="connectBtn">Connect APIs</button>
+      </div>
+    </header>
+
+    <main>
+      <section class="hero fade-in" style="--delay: 0.1s">
+        <div class="hero-left">
+          <span class="badge">Macro lens · Real-time synthesis</span>
+          <h1>Where is the economy heading right now?</h1>
+          <p>
+            This room ingests your live feeds, recalculates regime conditions, and translates
+            datapoints into actionable answers. It is designed for speed, clarity, and signal.
+          </p>
+          <div class="hero-metrics">
+            <div class="metric-card">
+              <h3>Macro Score</h3>
+              <div class="value" id="macroScore">--</div>
+              <div class="footnote" id="macroScoreNote">Awaiting data</div>
+            </div>
+            <div class="metric-card">
+              <h3>Regime</h3>
+              <div class="value" id="macroRegime">--</div>
+              <div class="footnote" id="macroRegimeNote">--</div>
+            </div>
+            <div class="metric-card">
+              <h3>Pulse</h3>
+              <div class="value" id="macroPulse">--</div>
+              <div class="footnote" id="macroPulseNote">--</div>
+            </div>
+          </div>
+        </div>
+        <div class="hero-right">
+          <div class="portrait-card">
+            <div class="portrait-frame">
+              <img id="ianPortrait" src="assets/ian-helfrich.jpg" alt="Dr. Ian Helfrich" />
+              <div class="portrait-placeholder" id="ianPlaceholder">IH</div>
+            </div>
+            <div class="portrait-meta">
+              <div class="ian-name" id="ianName">Dr. Ian Helfrich</div>
+              <div class="ian-title" id="ianTaglineDisplay">Macro strategist · Applied econometrics</div>
+            </div>
+            <div class="ian-quote" id="ianVoiceLine">"We trade regimes, not headlines."</div>
+            <div class="portrait-actions">
+              <button class="btn secondary" id="updateVoiceBtn">Edit voice + photo</button>
+            </div>
+          </div>
+          <div class="hero-panel">
+            <h4>Live synthesis</h4>
+            <div class="insight" id="heroInsight">Connect your APIs to generate live commentary.</div>
+            <div class="insight" id="heroShift">No data yet. Using fallback mock series.</div>
+            <div class="insight" id="heroScenario">Scenario overrides: none.</div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section fade-in" style="--delay: 0.18s">
+        <div class="section-header">
+          <h2>Ian's Live Call</h2>
+          <span class="badge" id="callConfidence">Conviction: --</span>
+        </div>
+        <div class="call-grid">
+          <div class="card call-card">
+            <div class="label">Call headline</div>
+            <div class="answer" id="ianCallHeadline">--</div>
+            <div class="footnote" id="ianCallDetail">--</div>
+            <div class="call-actions">
+              <button class="btn secondary" id="copyCallBtn">Copy call</button>
+              <button class="btn" id="shareCallBtn">Share</button>
+            </div>
+          </div>
+          <div class="card call-card">
+            <div class="label">Top drivers</div>
+            <div class="driver-list" id="driverList"></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section fade-in" style="--delay: 0.24s">
+        <div class="section-header">
+          <h2>Signal Lab</h2>
+          <span class="badge">Tune the macro lens</span>
+        </div>
+        <div class="lab-grid">
+          <div class="card lab-card">
+            <h3>Signal mixer</h3>
+            <div class="slider-row">
+              <div class="slider-label">
+                <span>Inflation sensitivity</span>
+                <span class="weight-value" data-weight-value="inflation">1.00x</span>
+              </div>
+              <input type="range" min="0.5" max="1.5" step="0.05" value="1" data-weight="inflation" />
+            </div>
+            <div class="slider-row">
+              <div class="slider-label">
+                <span>Labor sensitivity</span>
+                <span class="weight-value" data-weight-value="labor">1.00x</span>
+              </div>
+              <input type="range" min="0.5" max="1.5" step="0.05" value="1" data-weight="labor" />
+            </div>
+            <div class="slider-row">
+              <div class="slider-label">
+                <span>Growth sensitivity</span>
+                <span class="weight-value" data-weight-value="growth">1.00x</span>
+              </div>
+              <input type="range" min="0.5" max="1.5" step="0.05" value="1" data-weight="growth" />
+            </div>
+            <div class="slider-row">
+              <div class="slider-label">
+                <span>Curve sensitivity</span>
+                <span class="weight-value" data-weight-value="curve">1.00x</span>
+              </div>
+              <input type="range" min="0.5" max="1.5" step="0.05" value="1" data-weight="curve" />
+            </div>
+            <div class="slider-row">
+              <div class="slider-label">
+                <span>Credit sensitivity</span>
+                <span class="weight-value" data-weight-value="credit">1.00x</span>
+              </div>
+              <input type="range" min="0.5" max="1.5" step="0.05" value="1" data-weight="credit" />
+            </div>
+            <div class="slider-row">
+              <div class="slider-label">
+                <span>Demand sensitivity</span>
+                <span class="weight-value" data-weight-value="demand">1.00x</span>
+              </div>
+              <input type="range" min="0.5" max="1.5" step="0.05" value="1" data-weight="demand" />
+            </div>
+            <div class="score-compare">
+              <div class="score-box">
+                <span class="label">Base score</span>
+                <div class="value" id="baseScoreValue">--</div>
+              </div>
+              <div class="score-box">
+                <span class="label">Scenario score</span>
+                <div class="value" id="scenarioScoreValue">--</div>
+              </div>
+              <div class="score-delta" id="scenarioDeltaValue">--</div>
+            </div>
+            <button class="btn secondary" id="resetWeightsBtn">Reset weights</button>
+          </div>
+          <div class="card lab-card">
+            <h3>Scenario toggles</h3>
+            <div class="toggle-list">
+              <label class="toggle">
+                <input type="checkbox" data-scenario="oilShock" />
+                <span>Oil shock (+inflation, -growth)</span>
+              </label>
+              <label class="toggle">
+                <input type="checkbox" data-scenario="policyCut" />
+                <span>Policy cut (-inflation, +growth)</span>
+              </label>
+              <label class="toggle">
+                <input type="checkbox" data-scenario="creditTightening" />
+                <span>Credit tightening (-growth, +risk)</span>
+              </label>
+              <label class="toggle">
+                <input type="checkbox" data-scenario="demandSurge" />
+                <span>Demand surge (+growth, +inflation)</span>
+              </label>
+            </div>
+            <div class="scenario-summary" id="scenarioSummary">No overrides active.</div>
+          </div>
+          <div class="card lab-card wide">
+            <h3>Regime map</h3>
+            <div class="chart-wrap"><canvas id="chart-regime"></canvas></div>
+            <div class="footnote" id="regimeMapNote">Waiting on CPI + GDP.</div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section fade-in" style="--delay: 0.28s">
+        <div class="section-header">
+          <h2>Macro Fundamentals Studio</h2>
+          <span class="badge">Interactive · Econ 205 foundations</span>
+        </div>
+        <div class="studio-grid">
+          <div class="card studio-card">
+            <div class="label">Business Cycle Compass</div>
+            <div class="cycle-map" id="cycleMap">
+              <span class="cycle-axis horizontal"></span>
+              <span class="cycle-axis vertical"></span>
+              <span class="cycle-dot" id="cycleDot"></span>
+            </div>
+            <div class="cycle-controls">
+              <label>
+                Output gap
+                <input id="outputGap" type="range" min="-4" max="4" step="0.5" value="1" />
+                <span class="control-value" id="outputGapValue">+1.0</span>
+              </label>
+              <label>
+                Momentum
+                <input id="outputMomentum" type="range" min="-3" max="3" step="0.5" value="0.5" />
+                <span class="control-value" id="outputMomentumValue">+0.5</span>
+              </label>
+            </div>
+            <div class="cycle-result" id="cycleResult"></div>
+          </div>
+
+          <div class="card studio-card">
+            <div class="label">GDP Components · Transaction Lens</div>
+            <select id="transactionSelect">
+              <option value="haircut">Haircut service</option>
+              <option value="mustang">Ford sells a Mustang from inventory</option>
+              <option value="oldHouse">Old house sale (existing asset)</option>
+              <option value="newHouse">New house from builder</option>
+              <option value="fridge">New refrigerator (domestic)</option>
+            </select>
+            <div class="chip-row" id="transactionChips">
+              <span class="chip" data-chip="C">C</span>
+              <span class="chip" data-chip="I">I</span>
+              <span class="chip" data-chip="G">G</span>
+              <span class="chip" data-chip="NX">NX</span>
+            </div>
+            <div class="transaction-output" id="transactionOutput"></div>
+            <div class="footnote">Tap a transaction to see GDP components and nuance.</div>
+          </div>
+
+          <div class="card studio-card wide">
+            <div class="label">National Accounts Lab</div>
+            <div class="accounts-grid">
+              <div class="accounts-block">
+                <h4>Value added</h4>
+                <div class="mini-table">
+                  <div class="mini-row">
+                    <span>Agriculture sales</span>
+                    <input type="number" id="vaAgSales" value="2" />
+                    <span>Inputs</span>
+                    <input type="number" id="vaAgInputs" value="1" />
+                  </div>
+                  <div class="mini-row">
+                    <span>Manufacturing sales</span>
+                    <input type="number" id="vaManSales" value="6" />
+                    <span>Inputs</span>
+                    <input type="number" id="vaManInputs" value="3" />
+                  </div>
+                  <div class="mini-row">
+                    <span>Services sales</span>
+                    <input type="number" id="vaServSales" value="40" />
+                    <span>Inputs</span>
+                    <input type="number" id="vaServInputs" value="10" />
+                  </div>
+                </div>
+                <div class="output-row">GDP (value added): <span id="gdpValueAdded">--</span></div>
+              </div>
+              <div class="accounts-block">
+                <h4>Income</h4>
+                <div class="mini-table">
+                  <div class="mini-row">
+                    <span>Wages</span>
+                    <input type="number" id="incWages" value="25" />
+                  </div>
+                  <div class="mini-row">
+                    <span>Profits</span>
+                    <input type="number" id="incProfits" value="7" />
+                  </div>
+                  <div class="mini-row">
+                    <span>Taxes</span>
+                    <input type="number" id="incTaxes" value="1" />
+                  </div>
+                  <div class="mini-row">
+                    <span>Depreciation</span>
+                    <input type="number" id="incDep" value="3" />
+                  </div>
+                </div>
+                <div class="output-row">GDP (income): <span id="gdpIncome">--</span></div>
+              </div>
+              <div class="accounts-block">
+                <h4>Expenditure</h4>
+                <div class="mini-table">
+                  <div class="mini-row">
+                    <span>Consumption</span>
+                    <input type="number" id="expC" value="20" />
+                  </div>
+                  <div class="mini-row">
+                    <span>Investment</span>
+                    <input type="number" id="expI" value="2" />
+                  </div>
+                  <div class="mini-row">
+                    <span>Government</span>
+                    <input type="number" id="expG" value="5" />
+                  </div>
+                  <div class="mini-row">
+                    <span>Exports</span>
+                    <input type="number" id="expX" value="3" />
+                    <span>Imports</span>
+                    <input type="number" id="expM" value="4" />
+                  </div>
+                </div>
+                <div class="output-row">GDP (expenditure): <span id="gdpExpenditure">--</span></div>
+              </div>
+            </div>
+            <div class="accounts-summary" id="accountsSummary">Statistical discrepancy: --</div>
+          </div>
+
+          <div class="card studio-card wide">
+            <div class="label">Chocolate Bar Economy</div>
+            <div class="mini-table">
+              <div class="mini-row header">
+                <span>Year</span>
+                <span>Quantity</span>
+                <span>Price</span>
+                <span>Nominal GDP</span>
+                <span>Real GDP</span>
+                <span>Deflator</span>
+              </div>
+              <div class="mini-row">
+                <span>1 (base)</span>
+                <input type="number" id="chocQ1" value="10" />
+                <input type="number" id="chocP1" value="10" />
+                <span id="chocNom1">--</span>
+                <span id="chocReal1">--</span>
+                <span id="chocDef1">--</span>
+              </div>
+              <div class="mini-row">
+                <span>2</span>
+                <input type="number" id="chocQ2" value="12" />
+                <input type="number" id="chocP2" value="12" />
+                <span id="chocNom2">--</span>
+                <span id="chocReal2">--</span>
+                <span id="chocDef2">--</span>
+              </div>
+              <div class="mini-row">
+                <span>3</span>
+                <input type="number" id="chocQ3" value="16" />
+                <input type="number" id="chocP3" value="16" />
+                <span id="chocNom3">--</span>
+                <span id="chocReal3">--</span>
+                <span id="chocDef3">--</span>
+              </div>
+            </div>
+            <div class="output-row">Real GDP growth (Y2→Y3): <span id="chocGrowth">--</span></div>
+            <div class="output-row">Inflation (deflator Y2→Y3): <span id="chocInflation">--</span></div>
+          </div>
+
+          <div class="card studio-card">
+            <div class="label">Interest Rate Transmission</div>
+            <label class="slider-label">
+              Rate shock (bps)
+              <input id="rateShock" type="range" min="-200" max="200" step="25" value="50" />
+              <span class="control-value" id="rateShockValue">+50 bps</span>
+            </label>
+            <div class="rate-output" id="rateOutput"></div>
+            <div class="ian-note" id="rateNote"></div>
+          </div>
+
+          <div class="card studio-card">
+            <div class="label">Savings Calculator</div>
+            <div class="mini-table">
+              <div class="mini-row">
+                <span>GDP (Y)</span>
+                <input type="number" id="savY" value="35" />
+              </div>
+              <div class="mini-row">
+                <span>Consumption (C)</span>
+                <input type="number" id="savC" value="25" />
+              </div>
+              <div class="mini-row">
+                <span>Government (G)</span>
+                <input type="number" id="savG" value="12" />
+              </div>
+              <div class="mini-row">
+                <span>Taxes (T)</span>
+                <input type="number" id="savT" value="8" />
+              </div>
+            </div>
+            <div class="output-row">Private savings: <span id="savPrivate">--</span></div>
+            <div class="output-row">Public savings: <span id="savPublic">--</span></div>
+            <div class="output-row">National savings: <span id="savNational">--</span></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section fade-in" style="--delay: 0.3s">
+        <div class="section-header">
+          <h2>Questions answered</h2>
+          <span class="badge" id="coverageBadge">Coverage: --</span>
+        </div>
+        <div class="cards questions" id="questionGrid"></div>
+      </section>
+
+      <section class="section fade-in" style="--delay: 0.36s">
+        <div class="section-header">
+          <h2>Live signal boards</h2>
+          <span class="badge">Auto-refreshing visualizations</span>
+        </div>
+        <div class="chart-grid" id="chartGrid">
+          <div class="chart-card">
+            <h3>Inflation Glidepath</h3>
+            <div class="chart-wrap"><canvas id="chart-inflation"></canvas></div>
+          </div>
+          <div class="chart-card">
+            <h3>Labor Tightness</h3>
+            <div class="chart-wrap"><canvas id="chart-labor"></canvas></div>
+          </div>
+          <div class="chart-card">
+            <h3>Growth & Demand</h3>
+            <div class="chart-wrap"><canvas id="chart-growth"></canvas></div>
+          </div>
+          <div class="chart-card">
+            <h3>Rates & Curve</h3>
+            <div class="chart-wrap"><canvas id="chart-rates"></canvas></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section fade-in" style="--delay: 0.42s">
+        <div class="section-header">
+          <h2>Latest readings</h2>
+          <span class="badge">Download-ready</span>
+        </div>
+        <div class="table-wrap">
+          <table class="data-table" id="latestTable">
+            <thead>
+              <tr>
+                <th>Series</th>
+                <th>Latest</th>
+                <th>Date</th>
+                <th>Trend (6m)</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </section>
+
+      <div class="footer">
+        <div>Last refresh: <strong id="lastRefresh">--</strong></div>
+        <div id="dataStatus">Waiting for live data.</div>
+        <button class="btn secondary" id="refreshBtn">Refresh now</button>
+      </div>
+    </main>
+
+    <div class="drawer" id="configDrawer">
+      <div class="drawer-panel">
+        <h3>Connect your APIs</h3>
+        <p style="color: var(--ink-soft)">
+          Add your base URL and optional headers. Stored locally in your browser. No secrets are
+          committed to the repo.
+        </p>
+        <div class="field">
+          <label for="baseUrl">Base URL</label>
+          <input id="baseUrl" placeholder="https://api.yourdomain.com" />
+        </div>
+        <div class="field">
+          <label for="apiKey">API key (optional)</label>
+          <input id="apiKey" placeholder="sk-live-..." />
+        </div>
+        <div class="field">
+          <label for="headerJson">Additional headers (JSON)</label>
+          <textarea id="headerJson" placeholder='{ "X-Client": "macro-room" }'></textarea>
+        </div>
+        <div class="field">
+          <label for="refreshInterval">Refresh interval (seconds)</label>
+          <input id="refreshInterval" type="number" min="30" placeholder="300" />
+        </div>
+        <div style="display: flex; gap: 12px; justify-content: flex-end; margin-top: 18px">
+          <button class="btn secondary" id="closeDrawer">Cancel</button>
+          <button class="btn" id="saveConfig">Save</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="drawer" id="voiceDrawer">
+      <div class="drawer-panel">
+        <h3>Ian's Voice + Portrait</h3>
+        <p style="color: var(--ink-soft)">
+          Update the on-page voice, credentials, and portrait. Stored locally in your browser.
+        </p>
+        <div class="field">
+          <label for="ianNameInput">Name</label>
+          <input id="ianNameInput" placeholder="Dr. Ian Helfrich" />
+        </div>
+        <div class="field">
+          <label for="ianTagline">Tagline</label>
+          <input id="ianTagline" placeholder="Macro strategist · Applied econometrics" />
+        </div>
+        <div class="field">
+          <label for="ianVoiceText">Voice line</label>
+          <textarea id="ianVoiceText" placeholder="We trade regimes, not headlines."></textarea>
+        </div>
+        <div class="field">
+          <label for="ianTone">Tone keywords</label>
+          <input id="ianTone" placeholder="direct, decisive, data-first" />
+        </div>
+        <div class="field">
+          <label for="ianPortraitInput">Portrait (jpg/png)</label>
+          <input id="ianPortraitInput" type="file" accept="image/*" />
+        </div>
+        <div style="display: flex; gap: 12px; justify-content: flex-end; margin-top: 18px">
+          <button class="btn secondary" id="closeVoiceDrawer">Cancel</button>
+          <button class="btn" id="saveVoice">Save</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="drawer" id="questionDrawer">
+      <div class="drawer-panel wide">
+        <div class="drawer-header">
+          <h3 id="deepDiveTitle">Deep dive</h3>
+          <button class="btn secondary" id="closeQuestionDrawer">Close</button>
+        </div>
+        <p class="deep-dive-text" id="deepDiveNarrative"></p>
+        <div class="chart-wrap large"><canvas id="deepDiveChart"></canvas></div>
+        <div class="deep-dive-stats" id="deepDiveStats"></div>
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script type="module" src="app.js"></script>
+  </body>
+</html>
