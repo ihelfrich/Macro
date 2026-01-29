@@ -154,6 +154,27 @@ The tool normalizes time-series data in these formats:
 { data: [{ date, value }, ...] }
 ```
 
+### Live Data on GitHub Pages (Local APIs)
+GitHub Pages is static, so it **cannot reach APIs running only on your Mac**. Use one of these:
+
+**Option A — Publish snapshots from your Mac (works today)**
+1. Copy the example config: `scripts/publish_config.example.json` → `scripts/publish_config.json`
+2. Update `base_url`, headers, and endpoints.
+3. Run:
+   ```bash
+   python3 scripts/publish_live_data.py
+   git add data/live
+   git commit -m "Update live data"
+   git push
+   ```
+4. The site will auto-read `data/live/*.json` on GitHub Pages.
+
+To automate, add a cron job that runs the script and pushes every X minutes.
+
+**Option B — Deploy APIs publicly (best long-term)**
+Host the API on a public service (Fly/Render/Railway/Cloudflare Workers) and set the Base URL in the site’s **Connect APIs** drawer.  
+Make sure CORS allows your Pages domain (e.g., `https://ihelfrich.github.io`).
+
 ### Adding New Indicators:
 Edit `data/sources.js` to add your own economic indicators.
 

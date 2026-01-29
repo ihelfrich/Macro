@@ -1,0 +1,20 @@
+{
+  "base_url": "http://localhost:5001",
+  "headers": {
+    "X-API-Key": "YOUR_KEY_HERE"
+  },
+  "sources": [
+    { "id": "cpi", "path": "/macro/cpi" },
+    { "id": "core_pce", "path": "/macro/core-pce" },
+    { "id": "unemployment", "path": "/macro/unemployment" },
+    { "id": "wage_growth", "path": "/macro/wages" },
+    { "id": "gdp", "path": "/macro/gdp" },
+    { "id": "retail_sales", "path": "/macro/retail-sales" },
+    { "id": "pmi", "path": "/macro/pmi" },
+    { "id": "policy_rate", "path": "/rates/policy" },
+    { "id": "ten_year", "path": "/rates/10y" },
+    { "id": "two_year", "path": "/rates/2y" },
+    { "id": "credit_spread", "path": "/risk/credit-spread" }
+  ],
+  "output_dir": "data/live"
+}

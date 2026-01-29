@@ -648,8 +648,11 @@ async function fetchSourceSeries(source) {
   let url = source.endpoint;
   if (!/^https?:/i.test(url)) {
     if (!baseUrl) {
-      state.status[source.id] = "mock";
-      state.series[source.id] = mockSeries[source.id] || [];
+      const usedStatic = await fetchStaticSeries(source);
+      if (!usedStatic) {
+        state.status[source.id] = "mock";
+        state.series[source.id] = mockSeries[source.id] || [];
+      }
       return;
     }
     url = `${baseUrl.replace(/\/$/, "")}${source.endpoint}`;
@@ -668,6 +671,21 @@ async function fetchSourceSeries(source) {
   } catch (err) {
     state.series[source.id] = mockSeries[source.id] || [];
     state.status[source.id] = mockSeries[source.id] ? "mock" : "missing";
+  }
+}
+
+async function fetchStaticSeries(source) {
+  try {
+    const response = await fetch(`data/live/${source.id}.json`, { cache: "no-store" });
+    if (!response.ok) return false;
+    const json = await response.json();
+    const series = normalizeSeries(json.series || json);
+    if (!series.length) return false;
+    state.series[source.id] = series;
+    state.status[source.id] = "static";
+    return true;
+  } catch (err) {
+    return false;
   }
 }
 
@@ -746,10 +764,12 @@ function createPoint(dateRaw, valueRaw) {
 function updateCoverage() {
   const total = sources.length;
   const live = Object.values(state.status).filter((s) => s === "live").length;
+  const cached = Object.values(state.status).filter((s) => s === "static").length;
   const mock = Object.values(state.status).filter((s) => s === "mock").length;
-  const missing = total - live - mock;
-  elements.coverageBadge.textContent = `Coverage: ${live}/${total} live`;
-  elements.dataStatus.textContent = `${live} live · ${mock} mock · ${missing} missing`;
+  const missing = total - live - cached - mock;
+  const effective = live + cached;
+  elements.coverageBadge.textContent = `Coverage: ${effective}/${total} live`;
+  elements.dataStatus.textContent = `${live} live · ${cached} cached · ${mock} mock · ${missing} missing`;
 }
 
 function initQuestionCards() {
