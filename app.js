@@ -10,9 +10,9 @@ const DEFAULT_CONFIG = {
 
 const DEFAULT_VOICE = {
   name: "Dr. Ian Helfrich",
-  tagline: "Chief Research Economist · Geospatial trade + macro systems",
-  voiceLine: "Regimes beat headlines. Structure beats noise.",
-  tone: "direct, decisive, data-first"
+  tagline: "Economics Instructor · Interactive Learning Tools",
+  voiceLine: "Learn by doing. Master concepts through practice.",
+  tone: "clear, educational, student-focused"
 };
 
 const DEFAULT_WEIGHTS = {
@@ -280,6 +280,12 @@ const statusLabels = {
   good: "On track",
   warn: "Watch",
   neutral: "Neutral"
+};
+
+const chartTheme = {
+  tick: "#9aa4b0",
+  legend: "#e9e5db",
+  grid: "rgba(255, 255, 255, 0.08)"
 };
 
 init();
@@ -877,8 +883,8 @@ function renderRegimeMap() {
     {
       label: "History",
       data: trajectory,
-      borderColor: "rgba(27,43,42,0.6)",
-      backgroundColor: "rgba(27,43,42,0.2)",
+      borderColor: "rgba(233,229,219,0.6)",
+      backgroundColor: "rgba(233,229,219,0.2)",
       pointRadius: 3,
       showLine: true,
       tension: 0.2
@@ -886,8 +892,8 @@ function renderRegimeMap() {
     {
       label: "Current",
       data: [current],
-      borderColor: "#0f766e",
-      backgroundColor: "rgba(15,118,110,0.6)",
+      borderColor: "#35d1ff",
+      backgroundColor: "rgba(53,209,255,0.6)",
       pointRadius: 6
     }
   ];
@@ -896,8 +902,8 @@ function renderRegimeMap() {
     datasets.push({
       label: "Scenario",
       data: [scenarioPoint],
-      borderColor: "#ff7a3d",
-      backgroundColor: "rgba(255,122,61,0.6)",
+      borderColor: "#2f5bff",
+      backgroundColor: "rgba(47,91,255,0.6)",
       pointRadius: 6
     });
   }
@@ -913,7 +919,7 @@ function renderRegimeMap() {
         responsive: true,
         maintainAspectRatio: false,
         plugins: {
-          legend: { position: "bottom", labels: { color: "#1b2b2a" } },
+          legend: { position: "bottom", labels: { color: chartTheme.legend } },
           tooltip: {
             callbacks: {
               label: (context) => {
@@ -926,12 +932,14 @@ function renderRegimeMap() {
         },
         scales: {
           x: {
-            title: { display: true, text: "Inflation (%)", color: "#1b2b2a" },
-            ticks: { color: "#5c6a68" }
+            title: { display: true, text: "Inflation (%)", color: chartTheme.legend },
+            ticks: { color: chartTheme.tick },
+            grid: { color: chartTheme.grid }
           },
           y: {
-            title: { display: true, text: "Growth (%)", color: "#1b2b2a" },
-            ticks: { color: "#5c6a68" }
+            title: { display: true, text: "Growth (%)", color: chartTheme.legend },
+            ticks: { color: chartTheme.tick },
+            grid: { color: chartTheme.grid }
           }
         }
       }
@@ -1366,8 +1374,8 @@ function renderCharts() {
       return {
         label: series.meta ? series.meta.label : series.id,
         data: labels.map((label) => map.get(label) ?? null),
-        borderColor: series.meta ? series.meta.color : "#1b2b2a",
-        backgroundColor: "rgba(27,43,42,0.08)",
+        borderColor: series.meta ? series.meta.color : "#35d1ff",
+        backgroundColor: "rgba(53,209,255,0.08)",
         borderWidth: 2,
         tension: 0.35,
         spanGaps: true
@@ -1382,12 +1390,12 @@ function renderCharts() {
           responsive: true,
           maintainAspectRatio: false,
           plugins: {
-            legend: { position: "bottom", labels: { color: "#1b2b2a" } },
+            legend: { position: "bottom", labels: { color: chartTheme.legend } },
             tooltip: { mode: "index", intersect: false }
           },
           scales: {
-            x: { ticks: { color: "#5c6a68" } },
-            y: { ticks: { color: "#5c6a68" } }
+            x: { ticks: { color: chartTheme.tick }, grid: { color: chartTheme.grid } },
+            y: { ticks: { color: chartTheme.tick }, grid: { color: chartTheme.grid } }
           }
         }
       });
@@ -1458,8 +1466,8 @@ function renderDeepDive(questionId) {
     return {
       label: series.meta ? series.meta.label : series.id,
       data: labels.map((label) => map.get(label) ?? null),
-      borderColor: series.meta ? series.meta.color : "#1b2b2a",
-      backgroundColor: "rgba(27,43,42,0.08)",
+      borderColor: series.meta ? series.meta.color : "#35d1ff",
+      backgroundColor: "rgba(53,209,255,0.08)",
       borderWidth: 2,
       tension: 0.3,
       spanGaps: true
@@ -1474,12 +1482,12 @@ function renderDeepDive(questionId) {
         responsive: true,
         maintainAspectRatio: false,
         plugins: {
-          legend: { position: "bottom", labels: { color: "#1b2b2a" } },
+          legend: { position: "bottom", labels: { color: chartTheme.legend } },
           tooltip: { mode: "index", intersect: false }
         },
         scales: {
-          x: { ticks: { color: "#5c6a68" } },
-          y: { ticks: { color: "#5c6a68" } }
+          x: { ticks: { color: chartTheme.tick }, grid: { color: chartTheme.grid } },
+          y: { ticks: { color: chartTheme.tick }, grid: { color: chartTheme.grid } }
         }
       }
     });

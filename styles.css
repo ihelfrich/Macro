@@ -1,14 +1,14 @@
 :root {
-  --bg: #f4f0e8;
-  --bg-deep: #e7e1d3;
-  --ink: #1b2b2a;
-  --ink-soft: #41524f;
-  --accent: #ff7a3d;
-  --accent-2: #0f766e;
-  --accent-3: #e0b75a;
-  --card: rgba(255, 255, 255, 0.72);
-  --line: rgba(27, 43, 42, 0.14);
-  --shadow: 0 18px 45px rgba(27, 43, 42, 0.16);
+  --bg: #05060b;
+  --bg-deep: #0b0d17;
+  --ink: #e9e5db;
+  --ink-soft: #9aa4b0;
+  --accent: #2f5bff;
+  --accent-2: #35d1ff;
+  --accent-3: #5b8cff;
+  --card: rgba(10, 12, 20, 0.78);
+  --line: rgba(255, 255, 255, 0.08);
+  --shadow: 0 18px 45px rgba(2, 6, 18, 0.8);
   --radius-lg: 24px;
   --radius-md: 16px;
   --radius-sm: 12px;
@@ -20,20 +20,30 @@
 
 body {
   margin: 0;
-  font-family: "Space Grotesk", "Segoe UI", sans-serif;
+  font-family: "IBM Plex Mono", "SFMono-Regular", ui-monospace, monospace;
   color: var(--ink);
-  background: radial-gradient(circle at 15% 15%, #fff6e6 0%, #f3eee5 40%, #e7e0d0 100%);
+  background: radial-gradient(circle at 20% 20%, #10152a 0%, #060810 45%, #05060b 100%);
   min-height: 100vh;
   position: relative;
   overflow-x: hidden;
+  letter-spacing: 0.01em;
+}
+
+h1,
+h2,
+h3,
+h4 {
+  font-family: "Montserrat", sans-serif;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
 }
 
 body::before {
   content: "";
   position: fixed;
   inset: 0;
-  background: radial-gradient(circle at 80% 10%, rgba(255, 122, 61, 0.15), transparent 35%),
-    radial-gradient(circle at 20% 85%, rgba(15, 118, 110, 0.15), transparent 40%);
+  background: radial-gradient(circle at 80% 15%, rgba(47, 91, 255, 0.25), transparent 38%),
+    radial-gradient(circle at 20% 85%, rgba(53, 209, 255, 0.2), transparent 45%);
   pointer-events: none;
   z-index: -2;
 }
@@ -42,16 +52,27 @@ body::after {
   content: "";
   position: fixed;
   inset: 0;
-  background-image: linear-gradient(120deg, rgba(27, 43, 42, 0.06) 1px, transparent 1px),
-    linear-gradient(300deg, rgba(27, 43, 42, 0.05) 1px, transparent 1px);
-  background-size: 140px 140px;
-  opacity: 0.5;
+  background-image: linear-gradient(120deg, rgba(255, 255, 255, 0.04) 1px, transparent 1px),
+    linear-gradient(300deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+  background-size: 160px 160px;
+  opacity: 0.35;
   z-index: -3;
   pointer-events: none;
 }
 
 a {
   color: inherit;
+}
+
+.math-glow {
+  text-shadow: 0 0 12px rgba(47, 91, 255, 0.45), 0 0 28px rgba(53, 209, 255, 0.25);
+}
+
+.text-gradient {
+  background-image: linear-gradient(135deg, var(--accent-2), var(--accent), var(--accent-3));
+  color: transparent;
+  -webkit-background-clip: text;
+  background-clip: text;
 }
 
 main {
@@ -72,7 +93,9 @@ main {
   align-items: center;
   gap: 14px;
   font-weight: 600;
-  letter-spacing: 0.02em;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  font-family: "Montserrat", sans-serif;
 }
 
 .brand-mark {
@@ -80,7 +103,7 @@ main {
   height: 42px;
   border-radius: 50%;
   background: conic-gradient(from 90deg, var(--accent), var(--accent-2), var(--accent-3), var(--accent));
-  box-shadow: 0 12px 25px rgba(255, 122, 61, 0.2);
+  box-shadow: 0 0 25px rgba(47, 91, 255, 0.35);
   position: relative;
 }
 
@@ -106,17 +129,20 @@ main {
   gap: 8px;
   padding: 6px 12px;
   border-radius: 999px;
-  background: rgba(255, 122, 61, 0.12);
+  background: rgba(47, 91, 255, 0.16);
   color: var(--ink);
   font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  font-size: 0.72rem;
 }
 
 .live-dot {
   width: 8px;
   height: 8px;
   border-radius: 50%;
-  background: var(--accent);
-  box-shadow: 0 0 0 6px rgba(255, 122, 61, 0.2);
+  background: var(--accent-2);
+  box-shadow: 0 0 0 6px rgba(53, 209, 255, 0.2);
   animation: pulse 1.8s infinite;
 }
 
@@ -130,14 +156,17 @@ button {
   padding: 10px 18px;
   font-weight: 600;
   cursor: pointer;
-  background: var(--ink);
+  background: linear-gradient(135deg, rgba(47, 91, 255, 0.9), rgba(53, 209, 255, 0.9));
   color: #fff;
   transition: transform 0.2s ease, box-shadow 0.2s ease;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  font-size: 0.75rem;
 }
 
 .btn.secondary {
   background: transparent;
-  border: 1px solid var(--ink);
+  border: 1px solid rgba(233, 229, 219, 0.4);
   color: var(--ink);
 }
 
@@ -153,9 +182,9 @@ button {
   margin-top: 32px;
   padding: 36px;
   border-radius: var(--radius-lg);
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.6));
+  background: linear-gradient(135deg, rgba(9, 11, 18, 0.95), rgba(15, 18, 28, 0.75));
   box-shadow: var(--shadow);
-  border: 1px solid rgba(255, 255, 255, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 .hero-left {
@@ -171,13 +200,15 @@ button {
 }
 
 .hero h1 {
-  font-family: "Fraunces", "Times New Roman", serif;
-  font-size: clamp(2.4rem, 4vw, 3.4rem);
+  font-family: "Montserrat", sans-serif;
+  font-size: clamp(2.2rem, 4vw, 3.4rem);
   margin: 0 0 12px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
 }
 
 .hero p {
-  font-size: 1.05rem;
+  font-size: 1rem;
   color: var(--ink-soft);
   line-height: 1.6;
 }
@@ -190,7 +221,7 @@ button {
 }
 
 .metric-card {
-  background: var(--card);
+  background: rgba(8, 10, 18, 0.8);
   border-radius: var(--radius-md);
   padding: 18px;
   border: 1px solid var(--line);
@@ -202,6 +233,7 @@ button {
   text-transform: uppercase;
   letter-spacing: 0.12em;
   color: var(--ink-soft);
+  font-family: "Montserrat", sans-serif;
 }
 
 .metric-card .value {
@@ -216,10 +248,10 @@ button {
 }
 
 .hero-panel {
-  background: rgba(15, 118, 110, 0.08);
+  background: rgba(12, 16, 26, 0.9);
   border-radius: var(--radius-md);
   padding: 22px;
-  border: 1px solid rgba(15, 118, 110, 0.18);
+  border: 1px solid rgba(53, 209, 255, 0.18);
   display: grid;
   gap: 14px;
 }
@@ -230,6 +262,7 @@ button {
   font-size: 0.8rem;
   letter-spacing: 0.12em;
   color: var(--ink-soft);
+  font-family: "Montserrat", sans-serif;
 }
 
 .hero-panel .insight {
@@ -238,10 +271,10 @@ button {
 }
 
 .credential-card {
-  background: rgba(255, 255, 255, 0.85);
+  background: rgba(9, 12, 20, 0.9);
   border-radius: var(--radius-md);
   padding: 16px;
-  border: 1px solid rgba(27, 43, 42, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.08);
   font-size: 0.9rem;
   color: var(--ink-soft);
 }
@@ -254,13 +287,13 @@ button {
 }
 
 .portrait-card {
-  background: rgba(255, 255, 255, 0.9);
+  background: rgba(9, 12, 20, 0.9);
   border-radius: var(--radius-md);
   padding: 18px;
-  border: 1px solid rgba(27, 43, 42, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.08);
   display: grid;
   gap: 14px;
-  box-shadow: 0 16px 35px rgba(27, 43, 42, 0.12);
+  box-shadow: 0 16px 35px rgba(2, 8, 24, 0.7);
 }
 
 .portrait-frame {
@@ -270,8 +303,8 @@ button {
   aspect-ratio: 1 / 1;
   border-radius: 18px;
   overflow: hidden;
-  background: radial-gradient(circle at 30% 30%, rgba(255, 122, 61, 0.3), rgba(15, 118, 110, 0.2));
-  border: 1px solid rgba(27, 43, 42, 0.1);
+  background: radial-gradient(circle at 30% 30%, rgba(47, 91, 255, 0.4), rgba(53, 209, 255, 0.15));
+  border: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 .portrait-frame img {
@@ -289,8 +322,8 @@ button {
   justify-content: center;
   font-size: 2.6rem;
   font-weight: 700;
-  color: rgba(27, 43, 42, 0.75);
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.65), rgba(255, 255, 255, 0.2));
+  color: rgba(233, 229, 219, 0.75);
+  background: linear-gradient(135deg, rgba(9, 12, 20, 0.85), rgba(12, 15, 24, 0.6));
 }
 
 .portrait-placeholder.hidden {
@@ -317,10 +350,10 @@ button {
   font-size: 1rem;
   line-height: 1.5;
   color: var(--ink);
-  background: rgba(15, 118, 110, 0.08);
+  background: rgba(47, 91, 255, 0.12);
   border-radius: 12px;
   padding: 12px;
-  border: 1px solid rgba(15, 118, 110, 0.18);
+  border: 1px solid rgba(47, 91, 255, 0.24);
 }
 
 .portrait-actions {
@@ -379,24 +412,25 @@ button {
 .studio-card select {
   padding: 8px 10px;
   border-radius: 10px;
-  border: 1px solid rgba(27, 43, 42, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.12);
   font-family: inherit;
-  background: rgba(255, 255, 255, 0.9);
+  background: rgba(8, 10, 18, 0.9);
+  color: var(--ink);
 }
 
 .cycle-map {
   position: relative;
   height: 180px;
   border-radius: 16px;
-  background: linear-gradient(135deg, rgba(15, 118, 110, 0.12), rgba(255, 122, 61, 0.12));
-  border: 1px solid rgba(27, 43, 42, 0.12);
+  background: linear-gradient(135deg, rgba(47, 91, 255, 0.15), rgba(53, 209, 255, 0.12));
+  border: 1px solid rgba(255, 255, 255, 0.1);
   overflow: hidden;
 }
 
 .cycle-axis.horizontal,
 .cycle-axis.vertical {
   position: absolute;
-  background: rgba(27, 43, 42, 0.2);
+  background: rgba(255, 255, 255, 0.15);
 }
 
 .cycle-axis.horizontal {
@@ -418,8 +452,8 @@ button {
   width: 14px;
   height: 14px;
   border-radius: 50%;
-  background: var(--accent);
-  box-shadow: 0 8px 16px rgba(255, 122, 61, 0.3);
+  background: var(--accent-2);
+  box-shadow: 0 8px 16px rgba(53, 209, 255, 0.3);
   transform: translate(-50%, -50%);
   left: 50%;
   top: 50%;
@@ -441,8 +475,8 @@ button {
 .cycle-result {
   padding: 12px;
   border-radius: 12px;
-  background: rgba(255, 255, 255, 0.75);
-  border: 1px solid rgba(27, 43, 42, 0.1);
+  background: rgba(9, 12, 20, 0.8);
+  border: 1px solid rgba(255, 255, 255, 0.08);
   font-size: 0.95rem;
   line-height: 1.5;
 }
@@ -456,16 +490,16 @@ button {
 .chip {
   padding: 6px 12px;
   border-radius: 999px;
-  border: 1px solid rgba(27, 43, 42, 0.12);
-  background: rgba(255, 255, 255, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(9, 12, 20, 0.8);
   font-weight: 600;
   font-size: 0.85rem;
 }
 
 .chip.active {
-  background: rgba(15, 118, 110, 0.16);
-  border-color: rgba(15, 118, 110, 0.4);
-  color: #0c5b54;
+  background: rgba(47, 91, 255, 0.2);
+  border-color: rgba(47, 91, 255, 0.5);
+  color: #cdd7ff;
 }
 
 .transaction-output {
@@ -508,9 +542,11 @@ button {
 .mini-row input {
   padding: 6px 8px;
   border-radius: 8px;
-  border: 1px solid rgba(27, 43, 42, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.12);
   font-family: inherit;
   font-size: 0.9rem;
+  background: rgba(8, 10, 18, 0.9);
+  color: var(--ink);
 }
 
 .output-row {
@@ -533,9 +569,9 @@ button {
 .ian-note {
   padding: 12px;
   border-radius: 12px;
-  background: rgba(255, 122, 61, 0.12);
-  color: #9a3a16;
-  border: 1px solid rgba(255, 122, 61, 0.2);
+  background: rgba(47, 91, 255, 0.18);
+  color: #cdd7ff;
+  border: 1px solid rgba(47, 91, 255, 0.3);
   font-size: 0.9rem;
 }
 
@@ -625,7 +661,7 @@ input[type="range"] {
   appearance: none;
   height: 6px;
   border-radius: 999px;
-  background: rgba(27, 43, 42, 0.12);
+  background: rgba(255, 255, 255, 0.12);
   outline: none;
 }
 
@@ -635,8 +671,8 @@ input[type="range"]::-webkit-slider-thumb {
   height: 18px;
   border-radius: 50%;
   background: var(--accent);
-  border: 2px solid #fff;
-  box-shadow: 0 6px 14px rgba(27, 43, 42, 0.2);
+  border: 2px solid rgba(255, 255, 255, 0.7);
+  box-shadow: 0 6px 14px rgba(2, 8, 24, 0.6);
 }
 
 input[type="range"]::-moz-range-thumb {
@@ -644,8 +680,8 @@ input[type="range"]::-moz-range-thumb {
   height: 18px;
   border-radius: 50%;
   background: var(--accent);
-  border: 2px solid #fff;
-  box-shadow: 0 6px 14px rgba(27, 43, 42, 0.2);
+  border: 2px solid rgba(255, 255, 255, 0.7);
+  box-shadow: 0 6px 14px rgba(2, 8, 24, 0.6);
 }
 
 .score-compare {
@@ -656,10 +692,10 @@ input[type="range"]::-moz-range-thumb {
 }
 
 .score-box {
-  background: rgba(255, 255, 255, 0.8);
+  background: rgba(9, 12, 20, 0.85);
   border-radius: 12px;
   padding: 10px 12px;
-  border: 1px solid rgba(27, 43, 42, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.08);
   display: grid;
   gap: 4px;
 }
@@ -675,18 +711,18 @@ input[type="range"]::-moz-range-thumb {
   justify-content: center;
   font-weight: 700;
   border-radius: 12px;
-  background: rgba(255, 122, 61, 0.16);
-  color: #9a3a16;
+  background: rgba(47, 91, 255, 0.18);
+  color: #cdd7ff;
 }
 
 .score-delta.positive {
-  background: rgba(15, 118, 110, 0.16);
-  color: #0c5b54;
+  background: rgba(53, 209, 255, 0.2);
+  color: #d4f2ff;
 }
 
 .score-delta.negative {
-  background: rgba(255, 122, 61, 0.18);
-  color: #9a3a16;
+  background: rgba(47, 91, 255, 0.28);
+  color: #cdd7ff;
 }
 
 .toggle-list {
@@ -700,8 +736,8 @@ input[type="range"]::-moz-range-thumb {
   align-items: center;
   padding: 10px 12px;
   border-radius: 12px;
-  border: 1px solid rgba(27, 43, 42, 0.1);
-  background: rgba(255, 255, 255, 0.75);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(9, 12, 20, 0.85);
   font-size: 0.9rem;
 }
 
@@ -720,7 +756,7 @@ input[type="range"]::-moz-range-thumb {
   border-radius: var(--radius-md);
   padding: 18px;
   border: 1px solid var(--line);
-  box-shadow: 0 10px 30px rgba(27, 43, 42, 0.08);
+  box-shadow: 0 14px 35px rgba(2, 8, 24, 0.6);
 }
 
 .card[data-status="good"] {
@@ -740,6 +776,7 @@ input[type="range"]::-moz-range-thumb {
   font-size: 0.75rem;
   letter-spacing: 0.12em;
   color: var(--ink-soft);
+  font-family: "Montserrat", sans-serif;
 }
 
 .card .answer {
@@ -763,7 +800,7 @@ input[type="range"]::-moz-range-thumb {
 .chart-card {
   padding: 18px;
   border-radius: var(--radius-md);
-  background: rgba(255, 255, 255, 0.8);
+  background: rgba(9, 12, 20, 0.85);
   border: 1px solid var(--line);
   min-height: 320px;
 }
@@ -798,8 +835,8 @@ input[type="range"]::-moz-range-thumb {
 .stat-chip {
   padding: 12px;
   border-radius: 12px;
-  background: rgba(255, 255, 255, 0.7);
-  border: 1px solid rgba(27, 43, 42, 0.1);
+  background: rgba(9, 12, 20, 0.85);
+  border: 1px solid rgba(255, 255, 255, 0.08);
   display: grid;
   gap: 4px;
 }
@@ -825,7 +862,7 @@ input[type="range"]::-moz-range-thumb {
   overflow-x: auto;
   border-radius: var(--radius-md);
   border: 1px solid var(--line);
-  background: rgba(255, 255, 255, 0.7);
+  background: rgba(9, 12, 20, 0.85);
 }
 
 .data-table {
@@ -838,7 +875,7 @@ input[type="range"]::-moz-range-thumb {
 .data-table td {
   padding: 12px 16px;
   text-align: left;
-  border-bottom: 1px solid rgba(27, 43, 42, 0.08);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
   font-size: 0.92rem;
 }
 
@@ -847,6 +884,7 @@ input[type="range"]::-moz-range-thumb {
   font-size: 0.72rem;
   letter-spacing: 0.14em;
   color: var(--ink-soft);
+  font-family: "Montserrat", sans-serif;
 }
 
 .data-table tr:last-child td {
@@ -859,17 +897,20 @@ input[type="range"]::-moz-range-thumb {
   gap: 8px;
   padding: 6px 12px;
   border-radius: 999px;
-  background: rgba(15, 118, 110, 0.12);
+  background: rgba(47, 91, 255, 0.18);
   color: var(--ink);
   font-weight: 600;
   font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  font-family: "Montserrat", sans-serif;
 }
 
 .footer {
   margin-top: 60px;
   padding: 24px;
   border-radius: var(--radius-md);
-  background: rgba(255, 255, 255, 0.8);
+  background: rgba(9, 12, 20, 0.85);
   border: 1px solid var(--line);
   display: flex;
   flex-wrap: wrap;
@@ -882,7 +923,7 @@ input[type="range"]::-moz-range-thumb {
 .drawer {
   position: fixed;
   inset: 0;
-  background: rgba(27, 43, 42, 0.35);
+  background: rgba(5, 6, 10, 0.75);
   backdrop-filter: blur(6px);
   display: none;
   align-items: center;
@@ -896,11 +937,11 @@ input[type="range"]::-moz-range-thumb {
 }
 
 .drawer-panel {
-  background: #fffdf7;
+  background: #0b0d17;
   border-radius: var(--radius-lg);
   padding: 28px;
   width: min(520px, 100%);
-  border: 1px solid rgba(27, 43, 42, 0.16);
+  border: 1px solid rgba(255, 255, 255, 0.08);
   box-shadow: var(--shadow);
 }
 
@@ -934,9 +975,11 @@ input[type="range"]::-moz-range-thumb {
 .field textarea {
   padding: 10px 12px;
   border-radius: 10px;
-  border: 1px solid rgba(27, 43, 42, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.12);
   font-family: inherit;
   font-size: 0.95rem;
+  background: rgba(8, 10, 18, 0.9);
+  color: var(--ink);
 }
 
 .field textarea {
@@ -951,13 +994,13 @@ input[type="range"]::-moz-range-thumb {
 }
 
 .status-pill.good {
-  background: rgba(15, 118, 110, 0.16);
-  color: #0c5b54;
+  background: rgba(53, 209, 255, 0.2);
+  color: #d4f2ff;
 }
 
 .status-pill.warn {
-  background: rgba(255, 122, 61, 0.18);
-  color: #9a3a16;
+  background: rgba(47, 91, 255, 0.28);
+  color: #cdd7ff;
 }
 
 .fade-in {
