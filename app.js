@@ -8,11 +8,18 @@ const DEFAULT_CONFIG = {
   refreshInterval: 300
 };
 
+const DEFAULT_EXPERIENCE = {
+  splineUrl: "",
+  ambientUrl: "",
+  ambientAuto: false,
+  ambientVolume: 0.4
+};
+
 const DEFAULT_VOICE = {
   name: "Dr. Ian Helfrich",
-  tagline: "Economics Instructor · Interactive Learning Tools",
-  voiceLine: "Learn by doing. Master concepts through practice.",
-  tone: "clear, educational, student-focused"
+  tagline: "Chief Research Economist · Geospatial trade + macro systems",
+  voiceLine: "Regimes beat headlines. Structure beats noise.",
+  tone: "direct, decisive, data-first"
 };
 
 const DEFAULT_WEIGHTS = {
@@ -90,12 +97,14 @@ const state = {
   status: {},
   charts: {},
   config: { ...DEFAULT_CONFIG },
+  experience: { ...DEFAULT_EXPERIENCE },
   voice: { ...DEFAULT_VOICE },
   weights: { ...DEFAULT_WEIGHTS },
   scenarios: { ...DEFAULT_SCENARIOS },
   activeQuestionId: null,
   refreshTimer: null,
-  portraitDraft: null
+  portraitDraft: null,
+  audio: null
 };
 
 const elements = {
@@ -115,6 +124,8 @@ const elements = {
   lastRefresh: document.getElementById("lastRefresh"),
   dataStatus: document.getElementById("dataStatus"),
   refreshBtn: document.getElementById("refreshBtn"),
+  experienceBtn: document.getElementById("experienceBtn"),
+  focusBtn: document.getElementById("focusBtn"),
   connectBtn: document.getElementById("connectBtn"),
   drawer: document.getElementById("configDrawer"),
   closeDrawer: document.getElementById("closeDrawer"),
@@ -123,6 +134,21 @@ const elements = {
   apiKey: document.getElementById("apiKey"),
   headerJson: document.getElementById("headerJson"),
   refreshInterval: document.getElementById("refreshInterval"),
+  experienceDrawer: document.getElementById("experienceDrawer"),
+  closeExperienceDrawer: document.getElementById("closeExperienceDrawer"),
+  saveExperience: document.getElementById("saveExperience"),
+  splineUrl: document.getElementById("splineUrl"),
+  ambientUrl: document.getElementById("ambientUrl"),
+  ambientAuto: document.getElementById("ambientAuto"),
+  splineViewer: document.getElementById("splineViewer"),
+  scenePlaceholder: document.getElementById("scenePlaceholder"),
+  sceneStatus: document.getElementById("sceneStatus"),
+  macroMood: document.getElementById("macroMood"),
+  macroMoodNote: document.getElementById("macroMoodNote"),
+  ambientToggle: document.getElementById("ambientToggle"),
+  ambientVolume: document.getElementById("ambientVolume"),
+  ambientFile: document.getElementById("ambientFile"),
+  ambientStatus: document.getElementById("ambientStatus"),
   ianName: document.getElementById("ianName"),
   ianTaglineDisplay: document.getElementById("ianTaglineDisplay"),
   ianVoiceLine: document.getElementById("ianVoiceLine"),
@@ -225,6 +251,7 @@ const elements = {
 elements.weightInputs = Array.from(document.querySelectorAll("[data-weight]"));
 elements.weightValueOutputs = Array.from(document.querySelectorAll("[data-weight-value]"));
 elements.scenarioInputs = Array.from(document.querySelectorAll("[data-scenario]"));
+elements.experienceTriggers = Array.from(document.querySelectorAll("[data-open-experience]"));
 
 const utils = {
   formatDate(dateStr) {
@@ -292,6 +319,7 @@ init();
 
 function init() {
   loadConfig();
+  loadExperience();
   loadVoice();
   loadLabSettings();
   initQuestionCards();
@@ -331,6 +359,86 @@ function saveConfig() {
   localStorage.setItem("macroConfig", JSON.stringify(state.config));
   applyConfigToForm();
   setupRefreshTimer();
+}
+
+function loadExperience() {
+  const stored = localStorage.getItem("macroExperience");
+  if (stored) {
+    try {
+      state.experience = { ...DEFAULT_EXPERIENCE, ...JSON.parse(stored) };
+    } catch (err) {
+      state.experience = { ...DEFAULT_EXPERIENCE };
+    }
+  }
+  state.audio = new Audio();
+  state.audio.loop = true;
+  state.audio.volume = Number(state.experience.ambientVolume ?? 0.4);
+  applyExperienceToUI();
+  updateScene();
+  updateAudioSource();
+}
+
+function applyExperienceToUI() {
+  if (elements.splineUrl) elements.splineUrl.value = state.experience.splineUrl || "";
+  if (elements.ambientUrl) elements.ambientUrl.value = state.experience.ambientUrl || "";
+  if (elements.ambientAuto) elements.ambientAuto.checked = Boolean(state.experience.ambientAuto);
+  if (elements.ambientVolume) elements.ambientVolume.value = String(state.experience.ambientVolume ?? 0.4);
+}
+
+function saveExperienceConfig() {
+  state.experience = {
+    splineUrl: elements.splineUrl.value.trim(),
+    ambientUrl: elements.ambientUrl.value.trim(),
+    ambientAuto: Boolean(elements.ambientAuto.checked),
+    ambientVolume: Number(elements.ambientVolume.value || 0.4)
+  };
+  localStorage.setItem("macroExperience", JSON.stringify(state.experience));
+  updateScene();
+  updateAudioSource();
+}
+
+function updateScene() {
+  if (!elements.splineViewer) return;
+  const url = state.experience.splineUrl;
+  if (url) {
+    elements.splineViewer.setAttribute("url", url);
+    if (elements.scenePlaceholder) elements.scenePlaceholder.style.display = "none";
+    if (elements.sceneStatus) elements.sceneStatus.textContent = "Scene loaded.";
+  } else {
+    elements.splineViewer.removeAttribute("url");
+    if (elements.scenePlaceholder) elements.scenePlaceholder.style.display = "grid";
+    if (elements.sceneStatus) elements.sceneStatus.textContent = "No scene loaded.";
+  }
+}
+
+function updateAudioSource() {
+  if (!state.audio) return;
+  state.audio.volume = Number(state.experience.ambientVolume ?? 0.4);
+  if (state.experience.ambientUrl) {
+    state.audio.src = state.experience.ambientUrl;
+    if (elements.ambientStatus) elements.ambientStatus.textContent = "Loaded from URL.";
+    if (state.experience.ambientAuto) {
+      tryAutoPlay();
+    }
+  } else if (elements.ambientStatus) {
+    elements.ambientStatus.textContent = state.audio.src ? "Custom track loaded." : "No track loaded.";
+  }
+  syncAmbientButton();
+}
+
+function syncAmbientButton() {
+  if (!elements.ambientToggle || !state.audio) return;
+  elements.ambientToggle.textContent = state.audio.paused ? "Play" : "Pause";
+}
+
+async function tryAutoPlay() {
+  if (!state.audio) return;
+  try {
+    await state.audio.play();
+  } catch (err) {
+    if (elements.ambientStatus) elements.ambientStatus.textContent = "Autoplay blocked. Click Play.";
+  }
+  syncAmbientButton();
 }
 
 function loadVoice() {
@@ -485,6 +593,38 @@ function wireEvents() {
     }
   });
 
+  if (elements.experienceBtn) {
+    elements.experienceBtn.addEventListener("click", () => openExperienceDrawer());
+  }
+  elements.experienceTriggers.forEach((trigger) => {
+    trigger.addEventListener("click", () => openExperienceDrawer());
+  });
+  if (elements.closeExperienceDrawer) {
+    elements.closeExperienceDrawer.addEventListener("click", () => closeExperienceDrawer());
+  }
+  if (elements.saveExperience) {
+    elements.saveExperience.addEventListener("click", () => {
+      saveExperienceConfig();
+      closeExperienceDrawer();
+    });
+  }
+  if (elements.experienceDrawer) {
+    elements.experienceDrawer.addEventListener("click", (event) => {
+      if (event.target === elements.experienceDrawer) closeExperienceDrawer();
+    });
+  }
+
+  if (elements.focusBtn) {
+    elements.focusBtn.addEventListener("click", toggleFocusMode);
+  }
+  syncFocusButton();
+  document.addEventListener("fullscreenchange", () => {
+    if (!document.fullscreenElement && document.body.classList.contains("focus-mode")) {
+      document.body.classList.remove("focus-mode");
+      syncFocusButton();
+    }
+  });
+
   elements.updateVoiceBtn.addEventListener("click", () => elements.voiceDrawer.classList.add("open"));
   elements.closeVoiceDrawer.addEventListener("click", () => elements.voiceDrawer.classList.remove("open"));
   elements.saveVoice.addEventListener("click", () => {
@@ -507,6 +647,21 @@ function wireEvents() {
     };
     reader.readAsDataURL(file);
   });
+
+  if (elements.ambientToggle) {
+    elements.ambientToggle.addEventListener("click", toggleAmbientAudio);
+  }
+  if (elements.ambientVolume) {
+    elements.ambientVolume.addEventListener("input", () => {
+      const value = Number(elements.ambientVolume.value || 0.4);
+      state.experience.ambientVolume = value;
+      localStorage.setItem("macroExperience", JSON.stringify(state.experience));
+      if (state.audio) state.audio.volume = value;
+    });
+  }
+  if (elements.ambientFile) {
+    elements.ambientFile.addEventListener("change", handleAmbientFile);
+  }
 
   elements.weightInputs.forEach((input) => {
     input.addEventListener("input", () => {
@@ -607,6 +762,57 @@ function wireStudioEvents() {
 
   const prodInputs = [elements.prodA, elements.prodK, elements.prodL, elements.prodAlpha];
   prodInputs.forEach((input) => input && input.addEventListener("input", renderProduction));
+}
+
+function openExperienceDrawer() {
+  if (elements.experienceDrawer) {
+    elements.experienceDrawer.classList.add("open");
+  }
+}
+
+function closeExperienceDrawer() {
+  if (elements.experienceDrawer) {
+    elements.experienceDrawer.classList.remove("open");
+  }
+}
+
+function toggleFocusMode() {
+  const isFocus = document.body.classList.toggle("focus-mode");
+  syncFocusButton();
+  if (isFocus && !document.fullscreenElement && document.documentElement.requestFullscreen) {
+    document.documentElement.requestFullscreen().catch(() => {});
+  } else if (!isFocus && document.fullscreenElement && document.exitFullscreen) {
+    document.exitFullscreen().catch(() => {});
+  }
+}
+
+function syncFocusButton() {
+  if (!elements.focusBtn) return;
+  const isFocus = document.body.classList.contains("focus-mode");
+  elements.focusBtn.textContent = isFocus ? "Exit Focus" : "Focus";
+}
+
+function handleAmbientFile(event) {
+  const file = event.target.files && event.target.files[0];
+  if (!file || !state.audio) return;
+  const url = URL.createObjectURL(file);
+  state.audio.src = url;
+  if (elements.ambientStatus) elements.ambientStatus.textContent = `Loaded ${file.name}`;
+  syncAmbientButton();
+}
+
+async function toggleAmbientAudio() {
+  if (!state.audio) return;
+  try {
+    if (state.audio.paused) {
+      await state.audio.play();
+    } else {
+      state.audio.pause();
+    }
+  } catch (err) {
+    if (elements.ambientStatus) elements.ambientStatus.textContent = "Playback blocked. Click again.";
+  }
+  syncAmbientButton();
 }
 
 function startClock() {
@@ -823,6 +1029,24 @@ function renderHero() {
   const pulse = score >= 70 ? "Expanding" : score >= 55 ? "Steady" : score >= 40 ? "Cooling" : "Risky";
   elements.macroPulse.textContent = pulse;
   elements.macroPulseNote.textContent = `Score ${score.toFixed(0)} / 100`;
+
+  const inflation = state.series.cpi || state.series.core_pce;
+  const growth = state.series.gdp;
+  const hasRegime = inflation && inflation.length && growth && growth.length;
+  const mood = hasRegime
+    ? score >= 70
+      ? "Risk-On"
+      : score >= 60
+        ? "Constructive"
+        : score >= 50
+          ? "Balanced"
+          : score >= 40
+            ? "Cautious"
+            : "Defensive"
+    : "Awaiting";
+  const moodNote = hasRegime ? `${regime.label} · ${regime.note}` : "Connect CPI + GDP to unlock mood.";
+  if (elements.macroMood) elements.macroMood.textContent = mood;
+  if (elements.macroMoodNote) elements.macroMoodNote.textContent = moodNote;
 
   elements.heroInsight.textContent = regime.insight;
   elements.heroShift.textContent = buildShiftNarrative();

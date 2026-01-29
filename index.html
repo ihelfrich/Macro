@@ -29,12 +29,28 @@
       <div class="header-meta">
         <span class="live-pill"><span class="live-dot"></span>Live</span>
         <span id="clock">--:--</span>
+        <button class="btn secondary" id="experienceBtn">Experience</button>
+        <button class="btn secondary" id="focusBtn">Focus</button>
         <button class="btn" id="connectBtn">Connect APIs</button>
       </div>
     </header>
 
     <main>
       <section class="hero fade-in" style="--delay: 0.1s">
+        <div class="hero-scene">
+          <div class="scene-frame">
+            <spline-viewer id="splineViewer" url=""></spline-viewer>
+            <div class="scene-placeholder" id="scenePlaceholder">
+              <div class="scene-title">Attach a Spline scene</div>
+              <div class="scene-text">Add a public Spline URL in Experience to activate.</div>
+            </div>
+          </div>
+          <div class="scene-hud">
+            <div class="hud-label">Macro Mood</div>
+            <div class="hud-value" id="macroMood">--</div>
+            <div class="hud-sub" id="macroMoodNote">Awaiting live data</div>
+          </div>
+        </div>
         <div class="hero-left">
           <span class="badge">Macro lens · Real-time synthesis</span>
           <h1 class="text-gradient math-glow">Where is the economy heading right now?</h1>
@@ -95,6 +111,36 @@
                 >
               </li>
             </ul>
+          </div>
+        </div>
+      </section>
+
+      <section class="section fade-in" style="--delay: 0.14s">
+        <div class="section-header">
+          <h2>Experience Deck</h2>
+          <span class="badge">Audio + 3D controls</span>
+        </div>
+        <div class="experience-grid">
+          <div class="card experience-card">
+            <div class="label">Ambient Soundscape</div>
+            <div class="soundscape-controls">
+              <button class="btn secondary" id="ambientToggle">Play</button>
+              <div class="soundscape-row">
+                <span>Volume</span>
+                <input id="ambientVolume" type="range" min="0" max="1" step="0.05" value="0.4" />
+              </div>
+              <div class="soundscape-row">
+                <span>Track</span>
+                <input id="ambientFile" type="file" accept="audio/*" />
+              </div>
+              <div class="soundscape-status" id="ambientStatus">No track loaded.</div>
+            </div>
+          </div>
+          <div class="card experience-card">
+            <div class="label">3D Scene</div>
+            <div class="scene-status" id="sceneStatus">No scene loaded.</div>
+            <button class="btn secondary" data-open-experience>Set scene</button>
+            <div class="footnote">Use a public Spline URL (not private) for GitHub Pages.</div>
           </div>
         </div>
       </section>
@@ -572,6 +618,33 @@
       </div>
     </div>
 
+    <div class="drawer" id="experienceDrawer">
+      <div class="drawer-panel">
+        <h3>Experience Settings</h3>
+        <p style="color: var(--ink-soft)">
+          Configure the 3D scene and ambient audio. Stored locally in your browser.
+        </p>
+        <div class="field">
+          <label for="splineUrl">Spline scene URL</label>
+          <input id="splineUrl" placeholder="https://prod.spline.design/..." />
+        </div>
+        <div class="field">
+          <label for="ambientUrl">Ambient audio URL (optional)</label>
+          <input id="ambientUrl" placeholder="https://example.com/ambient.mp3" />
+        </div>
+        <div class="field">
+          <label>
+            <input id="ambientAuto" type="checkbox" />
+            Autoplay if allowed
+          </label>
+        </div>
+        <div style="display: flex; gap: 12px; justify-content: flex-end; margin-top: 18px">
+          <button class="btn secondary" id="closeExperienceDrawer">Cancel</button>
+          <button class="btn" id="saveExperience">Save</button>
+        </div>
+      </div>
+    </div>
+
     <div class="drawer" id="questionDrawer">
       <div class="drawer-panel wide">
         <div class="drawer-header">
@@ -585,6 +658,7 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script type="module" src="https://unpkg.com/@splinetool/viewer@1.0.94/build/spline-viewer.js"></script>
     <script type="module" src="app.js"></script>
   </body>
 </html>
