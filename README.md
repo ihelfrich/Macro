@@ -1,13 +1,14 @@
-# Macroeconomics Interactive Study Tool
+# Macroeconomics Live Data Lab
 
-An interactive web-based study platform for learning macroeconomics concepts. Created by Dr. Ian Helfrich for economics students, tutoring, and self-study.
+An interactive, data-first macroeconomics platform built for undergraduate learning and real-world interpretation. Created by Dr. Ian Helfrich for economics students, tutoring, and self-study.
 
 ## 🎯 What is This?
 
 This tool helps you **learn macroeconomics through practice**. It includes:
 
 - **Interactive Calculators** - Hands-on tools for GDP measurement, business cycles, inflation, interest rates, savings, and more
-- **Live Economic Data** - Connect to real-time APIs to see theory in action (optional)
+- **Live Macro Data** - Daily snapshots from FRED via GitHub Actions (no keys in the browser)
+- **Indicator Explorer** - Search, filter, and compare critical macro series
 - **Sample Data Built-In** - All calculators work offline with example data
 - **Visual Learning** - Charts and graphs update as you change values
 - **Comprehensive Guide** - See [COURSE_GUIDE.md](COURSE_GUIDE.md) for detailed explanations of all concepts
@@ -28,9 +29,9 @@ python3 -m http.server 8080
 
 ### Option 3: GitHub Pages (Public Hosting)
 1. Push this repo to GitHub
-2. Go to Settings → Pages
-3. Select "Deploy from main branch"
-4. Your site will be live at `https://yourusername.github.io/reponame`
+2. Go to Settings → Pages → **Deploy from GitHub Actions**
+3. Add repo secret `FRED_API_KEY` (Settings → Secrets and variables → Actions)
+4. Your site will auto-refresh data daily and deploy at `https://yourusername.github.io/reponame`
 
 ## 📚 What You Can Learn
 
@@ -44,12 +45,16 @@ python3 -m http.server 8080
 6. **Interest Rate Transmission** - See how Fed rate changes affect investment and consumption
 7. **Savings Calculator** - Compute private, public, and national savings
 8. **Long-Run Growth Tracker** - Analyze 20-year average growth rates
+9. **Indicator Explorer** - Search, filter, and compare critical macro series
 
-### Live Economic Indicators:
-- **Inflation Glidepath** - CPI and Core PCE trends
-- **Labor Tightness** - Unemployment and wage growth
-- **Growth & Demand** - Real GDP, retail sales, PMI
-- **Rates & Curve** - Fed funds rate, 2-year and 10-year Treasury yields
+### Live Economic Indicators (core set):
+- Inflation: CPI, Core CPI, PCE, Core PCE, breakevens
+- Labor: unemployment, payrolls, wage growth, participation, job openings
+- Growth: GDP, industrial production, real PCE, retail sales, PMI
+- Rates: Fed funds, 2Y/10Y yields, curve spreads
+- Credit: Baa-10Y spread, high yield OAS
+- Housing: starts, permits, home prices
+- Money: M2 growth, velocity
 
 ## 📖 How to Use This Tool
 
@@ -73,13 +78,13 @@ python3 -m http.server 8080
 
 ## 🔌 Connecting Live Data (Optional)
 
-**Note:** This is completely optional! All calculators work with built-in sample data.
+**Default behavior:** GitHub Actions pulls FRED snapshots into `data/live/` and the site loads them automatically.
 
-If you want to analyze real-time economic data:
+If you want to override with private or local APIs:
 
-1. Click **"Connect APIs"** in the top right
+1. Click **"Data Sources"** in the top right
 2. Enter your API details:
-   - **Base URL**: Your data source (e.g., FRED API, custom endpoint)
+   - **Base URL**: Your data source (private/local)
    - **API Key**: Optional authentication
    - **Headers**: Optional custom headers
 3. The tool automatically normalizes common API formats (FRED, World Bank, custom JSON)
@@ -98,8 +103,13 @@ If you want to analyze real-time economic data:
 ├── PS2_2.pdf              # Sample problem set
 ├── data/
 │   ├── sources.js         # Economic indicator definitions
-│   └── mock.js            # Built-in sample data
-└── assets/                # Optional images and media
+│   ├── mock.js            # Built-in sample data
+│   └── live/              # Published snapshots (GitHub Actions)
+├── assets/                # Optional images and media
+└── scripts/
+    ├── publish_live_data.py         # Fetch FRED snapshots
+    ├── publish_config.public.json   # Public config for GitHub Actions
+    └── publish_config.example.json  # Local template
 ```
 
 ## 🎓 Course Integration
@@ -154,29 +164,23 @@ The tool normalizes time-series data in these formats:
 { data: [{ date, value }, ...] }
 ```
 
-### Live Data on GitHub Pages (Local APIs)
-GitHub Pages is static, so it **cannot reach APIs running only on your Mac**. Use one of these:
+### Live Data on GitHub Pages (FRED snapshots)
+GitHub Pages is static, so the workflow fetches data server-side and deploys it with the site.
 
-**Option A — Publish snapshots from your Mac (works today)**
-1. Copy the example config: `scripts/publish_config.example.json` → `scripts/publish_config.json`
-2. Update `base_url`, headers, and endpoints.
-3. Run:
-   ```bash
-   python3 scripts/publish_live_data.py
-   git add data/live
-   git commit -m "Update live data"
-   git push
-   ```
-4. The site will auto-read `data/live/*.json` on GitHub Pages.
+**How it works**
+1. `scripts/publish_live_data.py` downloads FRED series listed in `scripts/publish_config.public.json`
+2. It writes `data/live/*.json`
+3. Pages deploys the updated site on a daily schedule (or manual dispatch)
 
-To automate, add a cron job that runs the script and pushes every X minutes.
-
-**Option B — Deploy APIs publicly (best long-term)**
-Host the API on a public service (Fly/Render/Railway/Cloudflare Workers) and set the Base URL in the site’s **Connect APIs** drawer.  
-Make sure CORS allows your Pages domain (e.g., `https://ihelfrich.github.io`).
+**Run locally (optional)**
+```bash
+export FRED_API_KEY=your_key_here
+python3 scripts/publish_live_data.py
+```
 
 ### Adding New Indicators:
-Edit `data/sources.js` to add your own economic indicators.
+Edit `data/sources.js` to add your own economic indicators, then add matching entries in
+`scripts/publish_config.public.json` so GitHub Actions fetches them.
 
 ## 📝 Pedagogical Approach
 

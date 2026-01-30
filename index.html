@@ -29,34 +29,19 @@
       <div class="header-meta">
         <span class="live-pill"><span class="live-dot"></span>Live</span>
         <span id="clock">--:--</span>
-        <button class="btn secondary" id="experienceBtn">Experience</button>
-        <button class="btn secondary" id="focusBtn">Focus</button>
-        <button class="btn" id="connectBtn">Connect APIs</button>
+        <button class="btn" id="connectBtn">Data Sources</button>
       </div>
     </header>
 
     <main>
       <section class="hero fade-in" style="--delay: 0.1s">
-        <div class="hero-scene">
-          <div class="scene-frame">
-            <spline-viewer id="splineViewer" url=""></spline-viewer>
-            <div class="scene-placeholder" id="scenePlaceholder">
-              <div class="scene-title">Attach a Spline scene</div>
-              <div class="scene-text">Add a public Spline URL in Experience to activate.</div>
-            </div>
-          </div>
-          <div class="scene-hud">
-            <div class="hud-label">Macro Mood</div>
-            <div class="hud-value" id="macroMood">--</div>
-            <div class="hud-sub" id="macroMoodNote">Awaiting live data</div>
-          </div>
-        </div>
         <div class="hero-left">
           <span class="badge">Macro lens · Real-time synthesis</span>
           <h1 class="text-gradient math-glow">Where is the economy heading right now?</h1>
           <p>
-            This room ingests live feeds, recalculates regime conditions, and translates
-            datapoints into actionable answers. Designed for speed, clarity, and signal.
+            This lab ingests critical macro indicators, recomputes regime conditions, and
+            connects the data to core concepts from undergraduate macroeconomics. Built for
+            clarity, rigor, and real-world intuition.
           </p>
           <div class="hero-metrics">
             <div class="metric-card">
@@ -92,9 +77,9 @@
             </div>
           </div>
           <div class="hero-panel">
-            <h4>Live synthesis</h4>
-            <div class="insight" id="heroInsight">Connect your APIs to generate live commentary.</div>
-            <div class="insight" id="heroShift">No data yet. Using fallback mock series.</div>
+            <h4>Macro briefing</h4>
+            <div class="insight" id="heroInsight">Loading the latest macro snapshot.</div>
+            <div class="insight" id="heroShift">If live data is unavailable, fallback mock data will load.</div>
             <div class="insight" id="heroScenario">Scenario overrides: none.</div>
           </div>
           <div class="credential-card">
@@ -115,39 +100,9 @@
         </div>
       </section>
 
-      <section class="section fade-in" style="--delay: 0.14s">
-        <div class="section-header">
-          <h2>Experience Deck</h2>
-          <span class="badge">Audio + 3D controls</span>
-        </div>
-        <div class="experience-grid">
-          <div class="card experience-card">
-            <div class="label">Ambient Soundscape</div>
-            <div class="soundscape-controls">
-              <button class="btn secondary" id="ambientToggle">Play</button>
-              <div class="soundscape-row">
-                <span>Volume</span>
-                <input id="ambientVolume" type="range" min="0" max="1" step="0.05" value="0.4" />
-              </div>
-              <div class="soundscape-row">
-                <span>Track</span>
-                <input id="ambientFile" type="file" accept="audio/*" />
-              </div>
-              <div class="soundscape-status" id="ambientStatus">No track loaded.</div>
-            </div>
-          </div>
-          <div class="card experience-card">
-            <div class="label">3D Scene</div>
-            <div class="scene-status" id="sceneStatus">No scene loaded.</div>
-            <button class="btn secondary" data-open-experience>Set scene</button>
-            <div class="footnote">Use a public Spline URL (not private) for GitHub Pages.</div>
-          </div>
-        </div>
-      </section>
-
       <section class="section fade-in" style="--delay: 0.18s">
         <div class="section-header">
-          <h2>Ian's Live Call</h2>
+          <h2>Live Macro Briefing</h2>
           <span class="badge" id="callConfidence">Conviction: --</span>
         </div>
         <div class="call-grid">
@@ -261,6 +216,38 @@
       </section>
 
       <section class="section fade-in" style="--delay: 0.28s">
+        <div class="section-header">
+          <h2>Indicator Explorer</h2>
+          <span class="badge">Search + compare critical macro series</span>
+        </div>
+        <div class="explorer-grid">
+          <div class="card explorer-panel">
+            <div class="explorer-controls">
+              <input
+                id="indicatorSearch"
+                type="search"
+                placeholder="Search indicators (CPI, payrolls, rates...)"
+                aria-label="Search macro indicators"
+              />
+              <div class="explorer-actions">
+                <label class="toggle-inline">
+                  <input id="explorerNormalize" type="checkbox" checked />
+                  <span>Normalize to 100</span>
+                </label>
+                <button class="btn secondary" id="explorerClear">Clear</button>
+              </div>
+            </div>
+            <div class="filter-row" id="indicatorFilters"></div>
+            <div class="indicator-list" id="indicatorList"></div>
+          </div>
+          <div class="card explorer-chart">
+            <div class="chart-wrap tall"><canvas id="explorerChart"></canvas></div>
+            <div class="footnote" id="explorerMeta">Select indicators to compare trends and levels.</div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section fade-in" style="--delay: 0.32s">
         <div class="section-header">
           <h2>Macro Fundamentals Studio</h2>
           <span class="badge">Interactive · Econ 205 foundations</span>
@@ -494,7 +481,7 @@
         </div>
       </section>
 
-      <section class="section fade-in" style="--delay: 0.3s">
+      <section class="section fade-in" style="--delay: 0.36s">
         <div class="section-header">
           <h2>Questions answered</h2>
           <span class="badge" id="coverageBadge">Coverage: --</span>
@@ -502,7 +489,7 @@
         <div class="cards questions" id="questionGrid"></div>
       </section>
 
-      <section class="section fade-in" style="--delay: 0.36s">
+      <section class="section fade-in" style="--delay: 0.42s">
         <div class="section-header">
           <h2>Live signal boards</h2>
           <span class="badge">Auto-refreshing visualizations</span>
@@ -524,10 +511,18 @@
             <h3>Rates & Curve</h3>
             <div class="chart-wrap"><canvas id="chart-rates"></canvas></div>
           </div>
+          <div class="chart-card">
+            <h3>Credit Conditions</h3>
+            <div class="chart-wrap"><canvas id="chart-credit"></canvas></div>
+          </div>
+          <div class="chart-card">
+            <h3>Housing Momentum</h3>
+            <div class="chart-wrap"><canvas id="chart-housing"></canvas></div>
+          </div>
         </div>
       </section>
 
-      <section class="section fade-in" style="--delay: 0.42s">
+      <section class="section fade-in" style="--delay: 0.48s">
         <div class="section-header">
           <h2>Latest readings</h2>
           <span class="badge">Download-ready</span>
@@ -557,10 +552,10 @@
 
     <div class="drawer" id="configDrawer">
       <div class="drawer-panel">
-        <h3>Connect your APIs</h3>
+        <h3>Data Sources</h3>
         <p style="color: var(--ink-soft)">
-          Add your base URL and optional headers. Stored locally in your browser. No secrets are
-          committed to the repo.
+          The site ships with curated macro snapshots. Add a base URL here to override with live
+          private or local APIs. Stored locally in your browser only.
         </p>
         <div class="field">
           <label for="baseUrl">Base URL</label>
@@ -618,33 +613,6 @@
       </div>
     </div>
 
-    <div class="drawer" id="experienceDrawer">
-      <div class="drawer-panel">
-        <h3>Experience Settings</h3>
-        <p style="color: var(--ink-soft)">
-          Configure the 3D scene and ambient audio. Stored locally in your browser.
-        </p>
-        <div class="field">
-          <label for="splineUrl">Spline scene URL</label>
-          <input id="splineUrl" placeholder="https://prod.spline.design/..." />
-        </div>
-        <div class="field">
-          <label for="ambientUrl">Ambient audio URL (optional)</label>
-          <input id="ambientUrl" placeholder="https://example.com/ambient.mp3" />
-        </div>
-        <div class="field">
-          <label>
-            <input id="ambientAuto" type="checkbox" />
-            Autoplay if allowed
-          </label>
-        </div>
-        <div style="display: flex; gap: 12px; justify-content: flex-end; margin-top: 18px">
-          <button class="btn secondary" id="closeExperienceDrawer">Cancel</button>
-          <button class="btn" id="saveExperience">Save</button>
-        </div>
-      </div>
-    </div>
-
     <div class="drawer" id="questionDrawer">
       <div class="drawer-panel wide">
         <div class="drawer-header">
@@ -658,7 +626,6 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script type="module" src="https://unpkg.com/@splinetool/viewer@1.0.94/build/spline-viewer.js"></script>
     <script type="module" src="app.js"></script>
   </body>
 </html>

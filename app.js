@@ -8,13 +8,6 @@ const DEFAULT_CONFIG = {
   refreshInterval: 300
 };
 
-const DEFAULT_EXPERIENCE = {
-  splineUrl: "",
-  ambientUrl: "",
-  ambientAuto: false,
-  ambientVolume: 0.4
-};
-
 const DEFAULT_VOICE = {
   name: "Dr. Ian Helfrich",
   tagline: "Chief Research Economist · Geospatial trade + macro systems",
@@ -97,14 +90,18 @@ const state = {
   status: {},
   charts: {},
   config: { ...DEFAULT_CONFIG },
-  experience: { ...DEFAULT_EXPERIENCE },
   voice: { ...DEFAULT_VOICE },
   weights: { ...DEFAULT_WEIGHTS },
   scenarios: { ...DEFAULT_SCENARIOS },
   activeQuestionId: null,
   refreshTimer: null,
   portraitDraft: null,
-  audio: null
+  explorer: {
+    search: "",
+    filters: new Set(),
+    selected: new Set(),
+    normalize: true
+  }
 };
 
 const elements = {
@@ -124,8 +121,6 @@ const elements = {
   lastRefresh: document.getElementById("lastRefresh"),
   dataStatus: document.getElementById("dataStatus"),
   refreshBtn: document.getElementById("refreshBtn"),
-  experienceBtn: document.getElementById("experienceBtn"),
-  focusBtn: document.getElementById("focusBtn"),
   connectBtn: document.getElementById("connectBtn"),
   drawer: document.getElementById("configDrawer"),
   closeDrawer: document.getElementById("closeDrawer"),
@@ -134,21 +129,13 @@ const elements = {
   apiKey: document.getElementById("apiKey"),
   headerJson: document.getElementById("headerJson"),
   refreshInterval: document.getElementById("refreshInterval"),
-  experienceDrawer: document.getElementById("experienceDrawer"),
-  closeExperienceDrawer: document.getElementById("closeExperienceDrawer"),
-  saveExperience: document.getElementById("saveExperience"),
-  splineUrl: document.getElementById("splineUrl"),
-  ambientUrl: document.getElementById("ambientUrl"),
-  ambientAuto: document.getElementById("ambientAuto"),
-  splineViewer: document.getElementById("splineViewer"),
-  scenePlaceholder: document.getElementById("scenePlaceholder"),
-  sceneStatus: document.getElementById("sceneStatus"),
-  macroMood: document.getElementById("macroMood"),
-  macroMoodNote: document.getElementById("macroMoodNote"),
-  ambientToggle: document.getElementById("ambientToggle"),
-  ambientVolume: document.getElementById("ambientVolume"),
-  ambientFile: document.getElementById("ambientFile"),
-  ambientStatus: document.getElementById("ambientStatus"),
+  indicatorSearch: document.getElementById("indicatorSearch"),
+  indicatorFilters: document.getElementById("indicatorFilters"),
+  indicatorList: document.getElementById("indicatorList"),
+  explorerChart: document.getElementById("explorerChart"),
+  explorerMeta: document.getElementById("explorerMeta"),
+  explorerNormalize: document.getElementById("explorerNormalize"),
+  explorerClear: document.getElementById("explorerClear"),
   ianName: document.getElementById("ianName"),
   ianTaglineDisplay: document.getElementById("ianTaglineDisplay"),
   ianVoiceLine: document.getElementById("ianVoiceLine"),
@@ -251,7 +238,6 @@ const elements = {
 elements.weightInputs = Array.from(document.querySelectorAll("[data-weight]"));
 elements.weightValueOutputs = Array.from(document.querySelectorAll("[data-weight-value]"));
 elements.scenarioInputs = Array.from(document.querySelectorAll("[data-scenario]"));
-elements.experienceTriggers = Array.from(document.querySelectorAll("[data-open-experience]"));
 
 const utils = {
   formatDate(dateStr) {
@@ -263,7 +249,7 @@ const utils = {
   formatValue(value, unit) {
     if (value === null || value === undefined || Number.isNaN(value)) return "--";
     const rounded = Math.abs(value) >= 100 ? value.toFixed(0) : value.toFixed(2);
-    return unit === "index" ? `${rounded}` : `${rounded}${unit || ""}`;
+    return unit === "index" || unit === "ratio" ? `${rounded}` : `${rounded}${unit || ""}`;
   },
   formatSigned(value, decimals = 2) {
     if (value === null || value === undefined || Number.isNaN(value)) return "--";
@@ -306,7 +292,11 @@ const utils = {
 const statusLabels = {
   good: "On track",
   warn: "Watch",
-  neutral: "Neutral"
+  neutral: "Neutral",
+  live: "Live",
+  static: "Cached",
+  mock: "Mock",
+  missing: "Missing"
 };
 
 const chartTheme = {
@@ -319,11 +309,11 @@ init();
 
 function init() {
   loadConfig();
-  loadExperience();
   loadVoice();
   loadLabSettings();
   initQuestionCards();
   initStudio();
+  initExplorer();
   wireEvents();
   startClock();
   refreshData();
@@ -359,86 +349,6 @@ function saveConfig() {
   localStorage.setItem("macroConfig", JSON.stringify(state.config));
   applyConfigToForm();
   setupRefreshTimer();
-}
-
-function loadExperience() {
-  const stored = localStorage.getItem("macroExperience");
-  if (stored) {
-    try {
-      state.experience = { ...DEFAULT_EXPERIENCE, ...JSON.parse(stored) };
-    } catch (err) {
-      state.experience = { ...DEFAULT_EXPERIENCE };
-    }
-  }
-  state.audio = new Audio();
-  state.audio.loop = true;
-  state.audio.volume = Number(state.experience.ambientVolume ?? 0.4);
-  applyExperienceToUI();
-  updateScene();
-  updateAudioSource();
-}
-
-function applyExperienceToUI() {
-  if (elements.splineUrl) elements.splineUrl.value = state.experience.splineUrl || "";
-  if (elements.ambientUrl) elements.ambientUrl.value = state.experience.ambientUrl || "";
-  if (elements.ambientAuto) elements.ambientAuto.checked = Boolean(state.experience.ambientAuto);
-  if (elements.ambientVolume) elements.ambientVolume.value = String(state.experience.ambientVolume ?? 0.4);
-}
-
-function saveExperienceConfig() {
-  state.experience = {
-    splineUrl: elements.splineUrl.value.trim(),
-    ambientUrl: elements.ambientUrl.value.trim(),
-    ambientAuto: Boolean(elements.ambientAuto.checked),
-    ambientVolume: Number(elements.ambientVolume.value || 0.4)
-  };
-  localStorage.setItem("macroExperience", JSON.stringify(state.experience));
-  updateScene();
-  updateAudioSource();
-}
-
-function updateScene() {
-  if (!elements.splineViewer) return;
-  const url = state.experience.splineUrl;
-  if (url) {
-    elements.splineViewer.setAttribute("url", url);
-    if (elements.scenePlaceholder) elements.scenePlaceholder.style.display = "none";
-    if (elements.sceneStatus) elements.sceneStatus.textContent = "Scene loaded.";
-  } else {
-    elements.splineViewer.removeAttribute("url");
-    if (elements.scenePlaceholder) elements.scenePlaceholder.style.display = "grid";
-    if (elements.sceneStatus) elements.sceneStatus.textContent = "No scene loaded.";
-  }
-}
-
-function updateAudioSource() {
-  if (!state.audio) return;
-  state.audio.volume = Number(state.experience.ambientVolume ?? 0.4);
-  if (state.experience.ambientUrl) {
-    state.audio.src = state.experience.ambientUrl;
-    if (elements.ambientStatus) elements.ambientStatus.textContent = "Loaded from URL.";
-    if (state.experience.ambientAuto) {
-      tryAutoPlay();
-    }
-  } else if (elements.ambientStatus) {
-    elements.ambientStatus.textContent = state.audio.src ? "Custom track loaded." : "No track loaded.";
-  }
-  syncAmbientButton();
-}
-
-function syncAmbientButton() {
-  if (!elements.ambientToggle || !state.audio) return;
-  elements.ambientToggle.textContent = state.audio.paused ? "Play" : "Pause";
-}
-
-async function tryAutoPlay() {
-  if (!state.audio) return;
-  try {
-    await state.audio.play();
-  } catch (err) {
-    if (elements.ambientStatus) elements.ambientStatus.textContent = "Autoplay blocked. Click Play.";
-  }
-  syncAmbientButton();
 }
 
 function loadVoice() {
@@ -567,6 +477,21 @@ function initStudio() {
   renderLongRunGrowth();
 }
 
+function initExplorer() {
+  state.explorer = {
+    search: "",
+    filters: new Set(),
+    selected: new Set(),
+    normalize: true
+  };
+  if (elements.explorerNormalize) {
+    elements.explorerNormalize.checked = state.explorer.normalize;
+  }
+  renderIndicatorFilters();
+  renderIndicatorList();
+  updateExplorerChart();
+}
+
 function parseHeaders(value) {
   if (!value || !value.trim()) return {};
   try {
@@ -593,38 +518,6 @@ function wireEvents() {
     }
   });
 
-  if (elements.experienceBtn) {
-    elements.experienceBtn.addEventListener("click", () => openExperienceDrawer());
-  }
-  elements.experienceTriggers.forEach((trigger) => {
-    trigger.addEventListener("click", () => openExperienceDrawer());
-  });
-  if (elements.closeExperienceDrawer) {
-    elements.closeExperienceDrawer.addEventListener("click", () => closeExperienceDrawer());
-  }
-  if (elements.saveExperience) {
-    elements.saveExperience.addEventListener("click", () => {
-      saveExperienceConfig();
-      closeExperienceDrawer();
-    });
-  }
-  if (elements.experienceDrawer) {
-    elements.experienceDrawer.addEventListener("click", (event) => {
-      if (event.target === elements.experienceDrawer) closeExperienceDrawer();
-    });
-  }
-
-  if (elements.focusBtn) {
-    elements.focusBtn.addEventListener("click", toggleFocusMode);
-  }
-  syncFocusButton();
-  document.addEventListener("fullscreenchange", () => {
-    if (!document.fullscreenElement && document.body.classList.contains("focus-mode")) {
-      document.body.classList.remove("focus-mode");
-      syncFocusButton();
-    }
-  });
-
   elements.updateVoiceBtn.addEventListener("click", () => elements.voiceDrawer.classList.add("open"));
   elements.closeVoiceDrawer.addEventListener("click", () => elements.voiceDrawer.classList.remove("open"));
   elements.saveVoice.addEventListener("click", () => {
@@ -648,19 +541,24 @@ function wireEvents() {
     reader.readAsDataURL(file);
   });
 
-  if (elements.ambientToggle) {
-    elements.ambientToggle.addEventListener("click", toggleAmbientAudio);
-  }
-  if (elements.ambientVolume) {
-    elements.ambientVolume.addEventListener("input", () => {
-      const value = Number(elements.ambientVolume.value || 0.4);
-      state.experience.ambientVolume = value;
-      localStorage.setItem("macroExperience", JSON.stringify(state.experience));
-      if (state.audio) state.audio.volume = value;
+  if (elements.indicatorSearch) {
+    elements.indicatorSearch.addEventListener("input", (event) => {
+      state.explorer.search = event.target.value;
+      renderIndicatorList();
     });
   }
-  if (elements.ambientFile) {
-    elements.ambientFile.addEventListener("change", handleAmbientFile);
+  if (elements.explorerNormalize) {
+    elements.explorerNormalize.addEventListener("change", () => {
+      state.explorer.normalize = elements.explorerNormalize.checked;
+      updateExplorerChart();
+    });
+  }
+  if (elements.explorerClear) {
+    elements.explorerClear.addEventListener("click", () => {
+      state.explorer.selected.clear();
+      renderIndicatorList();
+      updateExplorerChart();
+    });
   }
 
   elements.weightInputs.forEach((input) => {
@@ -764,57 +662,6 @@ function wireStudioEvents() {
   prodInputs.forEach((input) => input && input.addEventListener("input", renderProduction));
 }
 
-function openExperienceDrawer() {
-  if (elements.experienceDrawer) {
-    elements.experienceDrawer.classList.add("open");
-  }
-}
-
-function closeExperienceDrawer() {
-  if (elements.experienceDrawer) {
-    elements.experienceDrawer.classList.remove("open");
-  }
-}
-
-function toggleFocusMode() {
-  const isFocus = document.body.classList.toggle("focus-mode");
-  syncFocusButton();
-  if (isFocus && !document.fullscreenElement && document.documentElement.requestFullscreen) {
-    document.documentElement.requestFullscreen().catch(() => {});
-  } else if (!isFocus && document.fullscreenElement && document.exitFullscreen) {
-    document.exitFullscreen().catch(() => {});
-  }
-}
-
-function syncFocusButton() {
-  if (!elements.focusBtn) return;
-  const isFocus = document.body.classList.contains("focus-mode");
-  elements.focusBtn.textContent = isFocus ? "Exit Focus" : "Focus";
-}
-
-function handleAmbientFile(event) {
-  const file = event.target.files && event.target.files[0];
-  if (!file || !state.audio) return;
-  const url = URL.createObjectURL(file);
-  state.audio.src = url;
-  if (elements.ambientStatus) elements.ambientStatus.textContent = `Loaded ${file.name}`;
-  syncAmbientButton();
-}
-
-async function toggleAmbientAudio() {
-  if (!state.audio) return;
-  try {
-    if (state.audio.paused) {
-      await state.audio.play();
-    } else {
-      state.audio.pause();
-    }
-  } catch (err) {
-    if (elements.ambientStatus) elements.ambientStatus.textContent = "Playback blocked. Click again.";
-  }
-  syncAmbientButton();
-}
-
 function startClock() {
   const update = () => {
     const now = new Date();
@@ -841,6 +688,8 @@ async function refreshData() {
   renderRegimeMap();
   renderCharts();
   renderTable();
+  renderIndicatorList();
+  updateExplorerChart();
   renderLongRunGrowth();
   if (state.activeQuestionId) {
     renderDeepDive(state.activeQuestionId);
@@ -851,7 +700,8 @@ async function refreshData() {
 
 async function fetchSourceSeries(source) {
   const { baseUrl } = state.config;
-  let url = source.endpoint;
+  const endpoint = source.endpoint || `/series/${source.id}`;
+  let url = endpoint;
   if (!/^https?:/i.test(url)) {
     if (!baseUrl) {
       const usedStatic = await fetchStaticSeries(source);
@@ -861,7 +711,7 @@ async function fetchSourceSeries(source) {
       }
       return;
     }
-    url = `${baseUrl.replace(/\/$/, "")}${source.endpoint}`;
+    url = `${baseUrl.replace(/\/$/, "")}${endpoint}`;
   }
 
   const headers = buildHeaders();
@@ -974,7 +824,7 @@ function updateCoverage() {
   const mock = Object.values(state.status).filter((s) => s === "mock").length;
   const missing = total - live - cached - mock;
   const effective = live + cached;
-  elements.coverageBadge.textContent = `Coverage: ${effective}/${total} live`;
+  elements.coverageBadge.textContent = `Coverage: ${effective}/${total} updated`;
   elements.dataStatus.textContent = `${live} live · ${cached} cached · ${mock} mock · ${missing} missing`;
 }
 
@@ -1030,24 +880,6 @@ function renderHero() {
   elements.macroPulse.textContent = pulse;
   elements.macroPulseNote.textContent = `Score ${score.toFixed(0)} / 100`;
 
-  const inflation = state.series.cpi || state.series.core_pce;
-  const growth = state.series.gdp;
-  const hasRegime = inflation && inflation.length && growth && growth.length;
-  const mood = hasRegime
-    ? score >= 70
-      ? "Risk-On"
-      : score >= 60
-        ? "Constructive"
-        : score >= 50
-          ? "Balanced"
-          : score >= 40
-            ? "Cautious"
-            : "Defensive"
-    : "Awaiting";
-  const moodNote = hasRegime ? `${regime.label} · ${regime.note}` : "Connect CPI + GDP to unlock mood.";
-  if (elements.macroMood) elements.macroMood.textContent = mood;
-  if (elements.macroMoodNote) elements.macroMoodNote.textContent = moodNote;
-
   elements.heroInsight.textContent = regime.insight;
   elements.heroShift.textContent = buildShiftNarrative();
   elements.heroScenario.textContent = formatScenarioSummary("sentence");
@@ -1100,8 +932,8 @@ function renderSignalLab() {
 }
 
 function renderRegimeMap() {
-  const inflation = state.series.cpi || state.series.core_pce;
-  const growth = state.series.gdp;
+  const inflation = state.series.cpi_yoy || state.series.core_pce_yoy;
+  const growth = state.series.gdp_yoy;
   if (!inflation || !growth || !inflation.length || !growth.length) {
     elements.regimeMapNote.textContent = "Waiting on CPI + GDP.";
     return;
@@ -1439,7 +1271,7 @@ function renderProduction() {
 }
 
 function renderLongRunGrowth() {
-  const series = state.series.gdp || [];
+  const series = state.series.gdp_yoy || [];
   if (!elements.longRunGrowth || !elements.latestGrowth || !elements.growthVol) return;
   if (!series.length) {
     elements.longRunGrowth.textContent = "Connect GDP series";
@@ -1489,10 +1321,166 @@ function estimatePointsPerYear(series) {
   return utils.clamp(Math.round(365 / avgDeltaDays), 1, 365);
 }
 
+function renderIndicatorFilters() {
+  if (!elements.indicatorFilters) return;
+  const categories = Array.from(new Set(sources.map((source) => source.category))).filter(Boolean);
+  elements.indicatorFilters.innerHTML = "";
+
+  categories.forEach((category) => {
+    const button = document.createElement("button");
+    const isActive = state.explorer.filters.has(category);
+    button.type = "button";
+    button.className = `filter-chip${isActive ? " active" : ""}`;
+    button.textContent = category;
+    button.addEventListener("click", () => {
+      if (state.explorer.filters.has(category)) {
+        state.explorer.filters.delete(category);
+      } else {
+        state.explorer.filters.add(category);
+      }
+      renderIndicatorFilters();
+      renderIndicatorList();
+    });
+    elements.indicatorFilters.appendChild(button);
+  });
+}
+
+function getFilteredIndicators() {
+  const search = state.explorer.search.trim().toLowerCase();
+  const activeFilters = state.explorer.filters;
+  return sources
+    .filter((source) => {
+      if (activeFilters.size && !activeFilters.has(source.category)) return false;
+      if (!search) return true;
+      const haystack = `${source.label} ${source.category || ""} ${(source.tags || []).join(" ")}`.toLowerCase();
+      return haystack.includes(search);
+    })
+    .sort((a, b) => a.label.localeCompare(b.label));
+}
+
+function renderIndicatorList() {
+  if (!elements.indicatorList) return;
+  const filtered = getFilteredIndicators();
+  elements.indicatorList.innerHTML = "";
+
+  filtered.forEach((source) => {
+    const series = state.series[source.id] || [];
+    const latest = utils.latest(series);
+    const status = state.status[source.id] || "missing";
+    const selected = state.explorer.selected.has(source.id);
+
+    const item = document.createElement("button");
+    item.type = "button";
+    item.className = `indicator-item${selected ? " selected" : ""}`;
+    item.setAttribute("aria-pressed", selected);
+    item.innerHTML = `
+      <div>
+        <div class="indicator-title">${source.label}</div>
+        <div class="indicator-meta">${source.category} · ${source.cadence} · ${source.unit}</div>
+        <div class="indicator-tags">
+          ${(source.tags || [])
+            .map((tag) => `<span class="tag">${tag}</span>`)
+            .join("")}
+        </div>
+      </div>
+      <div class="indicator-side">
+        <div class="indicator-value">${utils.formatValue(latest.value, source.unit)}</div>
+        <div class="indicator-date">${utils.formatDate(latest.date)}</div>
+        <span class="status-pill ${status}">${statusLabels[status] || status}</span>
+      </div>
+    `;
+    item.addEventListener("click", () => {
+      if (state.explorer.selected.has(source.id)) {
+        state.explorer.selected.delete(source.id);
+      } else {
+        state.explorer.selected.add(source.id);
+      }
+      renderIndicatorList();
+      updateExplorerChart();
+    });
+    elements.indicatorList.appendChild(item);
+  });
+
+  if (!filtered.length) {
+    const empty = document.createElement("div");
+    empty.className = "indicator-empty";
+    empty.textContent = "No indicators match that search.";
+    elements.indicatorList.appendChild(empty);
+  }
+}
+
+function updateExplorerChart() {
+  if (!elements.explorerChart) return;
+  const selectedIds = Array.from(state.explorer.selected);
+  const seriesData = selectedIds
+    .map((id) => ({
+      id,
+      meta: sources.find((source) => source.id === id),
+      values: state.series[id] || []
+    }))
+    .filter((series) => series.values.length);
+
+  const labels = mergeLabels(seriesData.map((series) => series.values));
+  const normalize = state.explorer.normalize && seriesData.length > 1;
+  const datasets = seriesData.map((series) => {
+    const map = new Map(series.values.map((point) => [point.date, point.value]));
+    const raw = labels.map((label) => map.get(label) ?? null);
+    let data = raw;
+    if (normalize) {
+      const base = raw.find((value) => value !== null && value !== undefined && value !== 0);
+      data = raw.map((value) => (value === null || base === undefined ? null : (value / base) * 100));
+    }
+    return {
+      label: series.meta ? series.meta.label : series.id,
+      data,
+      borderColor: series.meta ? series.meta.color : "#35d1ff",
+      backgroundColor: "rgba(53,209,255,0.08)",
+      borderWidth: 2,
+      tension: 0.35,
+      spanGaps: true
+    };
+  });
+
+  if (elements.explorerMeta) {
+    if (!seriesData.length) {
+      elements.explorerMeta.textContent = selectedIds.length
+        ? "Selected indicators have no data yet."
+        : "Select indicators to compare trends and levels.";
+    } else {
+      const mode = normalize ? "Indexed to 100 at first observation" : "Raw values";
+      elements.explorerMeta.textContent = `${seriesData.length} series · ${mode}`;
+    }
+  }
+
+  if (!state.charts.explorer) {
+    state.charts.explorer = new Chart(elements.explorerChart, {
+      type: "line",
+      data: { labels, datasets },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { position: "bottom", labels: { color: chartTheme.legend } },
+          tooltip: { mode: "index", intersect: false }
+        },
+        scales: {
+          x: { ticks: { color: chartTheme.tick }, grid: { color: chartTheme.grid } },
+          y: { ticks: { color: chartTheme.tick }, grid: { color: chartTheme.grid } }
+        }
+      }
+    });
+  } else {
+    const chart = state.charts.explorer;
+    chart.data.labels = labels;
+    chart.data.datasets = datasets;
+    chart.update();
+  }
+}
+
 function buildShiftNarrative() {
-  const inflation = state.series.cpi || state.series.core_pce;
+  const inflation = state.series.cpi_yoy || state.series.core_pce_yoy;
   const labor = state.series.unemployment;
-  const rates = state.series.policy_rate;
+  const rates = state.series.fed_funds;
 
   const inflationSlope = inflation ? utils.slope(inflation, 6) : 0;
   const laborSlope = labor ? utils.slope(labor, 6) : 0;
@@ -1515,14 +1503,13 @@ function computeScoreDrivers(weights = state.weights) {
 
 function getScoreComponents(weights = state.weights) {
   const components = [];
-  const cpi = state.series.cpi;
+  const cpi = state.series.cpi_yoy || state.series.core_pce_yoy;
   const unemp = state.series.unemployment;
-  const gdp = state.series.gdp;
-  const ten = state.series.ten_year;
-  const two = state.series.two_year;
-  const credit = state.series.credit_spread;
+  const gdp = state.series.gdp_yoy;
+  const curve = state.series.curve_10y2y;
+  const credit = state.series.high_yield_spread || state.series.baa_spread;
   const pmi = state.series.pmi;
-  const retail = state.series.retail_sales;
+  const retail = state.series.retail_sales_yoy;
 
   if (cpi && cpi.length) {
     const impact = (utils.slope(cpi, 6) < 0 ? 12 : -8) * weights.inflation;
@@ -1537,8 +1524,8 @@ function getScoreComponents(weights = state.weights) {
     const impact = (latest >= 2.5 ? 12 : latest >= 1.5 ? 6 : -8) * weights.growth;
     components.push({ label: "Growth level", impact });
   }
-  if (ten && two && ten.length && two.length) {
-    const spread = utils.latest(ten).value - utils.latest(two).value;
+  if (curve && curve.length) {
+    const spread = utils.latest(curve).value;
     const impact = (spread > 0 ? 6 : -6) * weights.curve;
     components.push({ label: "Curve shape", impact });
   }
@@ -1568,8 +1555,8 @@ function computeMacroScore(weights = state.weights) {
 }
 
 function computeRegime() {
-  const inflation = state.series.cpi || state.series.core_pce;
-  const growth = state.series.gdp;
+  const inflation = state.series.cpi_yoy || state.series.core_pce_yoy;
+  const growth = state.series.gdp_yoy;
 
   const inflationValue = inflation ? utils.latest(inflation).value : null;
   const growthValue = growth ? utils.latest(growth).value : null;

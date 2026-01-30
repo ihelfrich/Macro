@@ -1,5 +1,5 @@
 export const mockSeries = {
-  cpi: [
+  cpi_yoy: [
     { date: "2024-01-01", value: 3.4 },
     { date: "2024-02-01", value: 3.3 },
     { date: "2024-03-01", value: 3.2 },
@@ -13,7 +13,35 @@ export const mockSeries = {
     { date: "2024-11-01", value: 2.6 },
     { date: "2024-12-01", value: 2.6 }
   ],
-  core_pce: [
+  core_cpi_yoy: [
+    { date: "2024-01-01", value: 3.3 },
+    { date: "2024-02-01", value: 3.2 },
+    { date: "2024-03-01", value: 3.1 },
+    { date: "2024-04-01", value: 3.0 },
+    { date: "2024-05-01", value: 2.9 },
+    { date: "2024-06-01", value: 2.9 },
+    { date: "2024-07-01", value: 2.8 },
+    { date: "2024-08-01", value: 2.8 },
+    { date: "2024-09-01", value: 2.7 },
+    { date: "2024-10-01", value: 2.7 },
+    { date: "2024-11-01", value: 2.6 },
+    { date: "2024-12-01", value: 2.6 }
+  ],
+  pce_yoy: [
+    { date: "2024-01-01", value: 2.8 },
+    { date: "2024-02-01", value: 2.7 },
+    { date: "2024-03-01", value: 2.7 },
+    { date: "2024-04-01", value: 2.6 },
+    { date: "2024-05-01", value: 2.5 },
+    { date: "2024-06-01", value: 2.5 },
+    { date: "2024-07-01", value: 2.4 },
+    { date: "2024-08-01", value: 2.4 },
+    { date: "2024-09-01", value: 2.3 },
+    { date: "2024-10-01", value: 2.3 },
+    { date: "2024-11-01", value: 2.2 },
+    { date: "2024-12-01", value: 2.2 }
+  ],
+  core_pce_yoy: [
     { date: "2024-01-01", value: 2.9 },
     { date: "2024-02-01", value: 2.8 },
     { date: "2024-03-01", value: 2.8 },
@@ -26,6 +54,20 @@ export const mockSeries = {
     { date: "2024-10-01", value: 2.4 },
     { date: "2024-11-01", value: 2.3 },
     { date: "2024-12-01", value: 2.3 }
+  ],
+  breakeven_10y: [
+    { date: "2024-01-01", value: 2.2 },
+    { date: "2024-02-01", value: 2.3 },
+    { date: "2024-03-01", value: 2.3 },
+    { date: "2024-04-01", value: 2.4 },
+    { date: "2024-05-01", value: 2.4 },
+    { date: "2024-06-01", value: 2.3 },
+    { date: "2024-07-01", value: 2.3 },
+    { date: "2024-08-01", value: 2.2 },
+    { date: "2024-09-01", value: 2.2 },
+    { date: "2024-10-01", value: 2.1 },
+    { date: "2024-11-01", value: 2.1 },
+    { date: "2024-12-01", value: 2.1 }
   ],
   unemployment: [
     { date: "2024-01-01", value: 3.7 },
@@ -41,14 +83,21 @@ export const mockSeries = {
     { date: "2024-11-01", value: 4.1 },
     { date: "2024-12-01", value: 4.2 }
   ],
-  gdp: [
-    { date: "2023-10-01", value: 2.2 },
-    { date: "2024-01-01", value: 2.0 },
-    { date: "2024-04-01", value: 1.8 },
-    { date: "2024-07-01", value: 2.1 },
-    { date: "2024-10-01", value: 2.0 }
+  payrolls_yoy: [
+    { date: "2024-01-01", value: 1.9 },
+    { date: "2024-02-01", value: 1.8 },
+    { date: "2024-03-01", value: 1.7 },
+    { date: "2024-04-01", value: 1.6 },
+    { date: "2024-05-01", value: 1.6 },
+    { date: "2024-06-01", value: 1.5 },
+    { date: "2024-07-01", value: 1.5 },
+    { date: "2024-08-01", value: 1.4 },
+    { date: "2024-09-01", value: 1.4 },
+    { date: "2024-10-01", value: 1.3 },
+    { date: "2024-11-01", value: 1.3 },
+    { date: "2024-12-01", value: 1.2 }
   ],
-  wage_growth: [
+  wage_yoy: [
     { date: "2024-01-01", value: 4.1 },
     { date: "2024-02-01", value: 4.0 },
     { date: "2024-03-01", value: 3.9 },
@@ -62,7 +111,112 @@ export const mockSeries = {
     { date: "2024-11-01", value: 3.4 },
     { date: "2024-12-01", value: 3.4 }
   ],
-  policy_rate: [
+  participation: [
+    { date: "2024-01-01", value: 62.7 },
+    { date: "2024-02-01", value: 62.7 },
+    { date: "2024-03-01", value: 62.8 },
+    { date: "2024-04-01", value: 62.8 },
+    { date: "2024-05-01", value: 62.8 },
+    { date: "2024-06-01", value: 62.7 },
+    { date: "2024-07-01", value: 62.7 },
+    { date: "2024-08-01", value: 62.6 },
+    { date: "2024-09-01", value: 62.6 },
+    { date: "2024-10-01", value: 62.6 },
+    { date: "2024-11-01", value: 62.6 },
+    { date: "2024-12-01", value: 62.5 }
+  ],
+  job_openings_yoy: [
+    { date: "2024-01-01", value: -4.0 },
+    { date: "2024-02-01", value: -4.2 },
+    { date: "2024-03-01", value: -4.5 },
+    { date: "2024-04-01", value: -4.7 },
+    { date: "2024-05-01", value: -4.9 },
+    { date: "2024-06-01", value: -5.0 },
+    { date: "2024-07-01", value: -5.1 },
+    { date: "2024-08-01", value: -5.2 },
+    { date: "2024-09-01", value: -5.2 },
+    { date: "2024-10-01", value: -5.3 },
+    { date: "2024-11-01", value: -5.3 },
+    { date: "2024-12-01", value: -5.4 }
+  ],
+  gdp_yoy: [
+    { date: "2023-10-01", value: 2.2 },
+    { date: "2024-01-01", value: 2.0 },
+    { date: "2024-04-01", value: 1.8 },
+    { date: "2024-07-01", value: 2.1 },
+    { date: "2024-10-01", value: 2.0 }
+  ],
+  indpro_yoy: [
+    { date: "2024-01-01", value: 1.2 },
+    { date: "2024-02-01", value: 1.0 },
+    { date: "2024-03-01", value: 0.8 },
+    { date: "2024-04-01", value: 0.6 },
+    { date: "2024-05-01", value: 0.5 },
+    { date: "2024-06-01", value: 0.4 },
+    { date: "2024-07-01", value: 0.4 },
+    { date: "2024-08-01", value: 0.3 },
+    { date: "2024-09-01", value: 0.2 },
+    { date: "2024-10-01", value: 0.2 },
+    { date: "2024-11-01", value: 0.1 },
+    { date: "2024-12-01", value: 0.1 }
+  ],
+  retail_sales_yoy: [
+    { date: "2024-01-01", value: 2.1 },
+    { date: "2024-02-01", value: 2.0 },
+    { date: "2024-03-01", value: 1.9 },
+    { date: "2024-04-01", value: 1.8 },
+    { date: "2024-05-01", value: 1.7 },
+    { date: "2024-06-01", value: 1.8 },
+    { date: "2024-07-01", value: 1.9 },
+    { date: "2024-08-01", value: 2.0 },
+    { date: "2024-09-01", value: 2.1 },
+    { date: "2024-10-01", value: 2.0 },
+    { date: "2024-11-01", value: 2.0 },
+    { date: "2024-12-01", value: 2.1 }
+  ],
+  real_pce_yoy: [
+    { date: "2024-01-01", value: 2.2 },
+    { date: "2024-02-01", value: 2.1 },
+    { date: "2024-03-01", value: 2.0 },
+    { date: "2024-04-01", value: 1.9 },
+    { date: "2024-05-01", value: 1.9 },
+    { date: "2024-06-01", value: 1.8 },
+    { date: "2024-07-01", value: 1.8 },
+    { date: "2024-08-01", value: 1.7 },
+    { date: "2024-09-01", value: 1.7 },
+    { date: "2024-10-01", value: 1.6 },
+    { date: "2024-11-01", value: 1.6 },
+    { date: "2024-12-01", value: 1.6 }
+  ],
+  pmi: [
+    { date: "2024-01-01", value: 49.5 },
+    { date: "2024-02-01", value: 49.8 },
+    { date: "2024-03-01", value: 50.2 },
+    { date: "2024-04-01", value: 50.5 },
+    { date: "2024-05-01", value: 50.9 },
+    { date: "2024-06-01", value: 51.1 },
+    { date: "2024-07-01", value: 50.7 },
+    { date: "2024-08-01", value: 50.4 },
+    { date: "2024-09-01", value: 50.1 },
+    { date: "2024-10-01", value: 50.0 },
+    { date: "2024-11-01", value: 50.2 },
+    { date: "2024-12-01", value: 50.4 }
+  ],
+  sentiment: [
+    { date: "2024-01-01", value: 71.2 },
+    { date: "2024-02-01", value: 72.1 },
+    { date: "2024-03-01", value: 73.0 },
+    { date: "2024-04-01", value: 74.2 },
+    { date: "2024-05-01", value: 74.8 },
+    { date: "2024-06-01", value: 75.1 },
+    { date: "2024-07-01", value: 74.6 },
+    { date: "2024-08-01", value: 74.2 },
+    { date: "2024-09-01", value: 73.9 },
+    { date: "2024-10-01", value: 74.0 },
+    { date: "2024-11-01", value: 74.4 },
+    { date: "2024-12-01", value: 74.8 }
+  ],
+  fed_funds: [
     { date: "2024-01-01", value: 5.25 },
     { date: "2024-02-01", value: 5.25 },
     { date: "2024-03-01", value: 5.25 },
@@ -104,21 +258,35 @@ export const mockSeries = {
     { date: "2024-11-01", value: 4.0 },
     { date: "2024-12-01", value: 3.9 }
   ],
-  pmi: [
-    { date: "2024-01-01", value: 49.5 },
-    { date: "2024-02-01", value: 49.8 },
-    { date: "2024-03-01", value: 50.2 },
-    { date: "2024-04-01", value: 50.5 },
-    { date: "2024-05-01", value: 50.9 },
-    { date: "2024-06-01", value: 51.1 },
-    { date: "2024-07-01", value: 50.7 },
-    { date: "2024-08-01", value: 50.4 },
-    { date: "2024-09-01", value: 50.1 },
-    { date: "2024-10-01", value: 50.0 },
-    { date: "2024-11-01", value: 50.2 },
-    { date: "2024-12-01", value: 50.4 }
+  curve_10y2y: [
+    { date: "2024-01-01", value: -0.5 },
+    { date: "2024-02-01", value: -0.5 },
+    { date: "2024-03-01", value: -0.6 },
+    { date: "2024-04-01", value: -0.4 },
+    { date: "2024-05-01", value: -0.3 },
+    { date: "2024-06-01", value: -0.1 },
+    { date: "2024-07-01", value: -0.1 },
+    { date: "2024-08-01", value: -0.2 },
+    { date: "2024-09-01", value: -0.2 },
+    { date: "2024-10-01", value: -0.2 },
+    { date: "2024-11-01", value: -0.1 },
+    { date: "2024-12-01", value: -0.1 }
   ],
-  credit_spread: [
+  curve_10y3m: [
+    { date: "2024-01-01", value: -1.2 },
+    { date: "2024-02-01", value: -1.1 },
+    { date: "2024-03-01", value: -1.1 },
+    { date: "2024-04-01", value: -1.0 },
+    { date: "2024-05-01", value: -0.9 },
+    { date: "2024-06-01", value: -0.8 },
+    { date: "2024-07-01", value: -0.8 },
+    { date: "2024-08-01", value: -0.8 },
+    { date: "2024-09-01", value: -0.7 },
+    { date: "2024-10-01", value: -0.7 },
+    { date: "2024-11-01", value: -0.6 },
+    { date: "2024-12-01", value: -0.6 }
+  ],
+  baa_spread: [
     { date: "2024-01-01", value: 1.7 },
     { date: "2024-02-01", value: 1.8 },
     { date: "2024-03-01", value: 1.9 },
@@ -132,18 +300,81 @@ export const mockSeries = {
     { date: "2024-11-01", value: 1.9 },
     { date: "2024-12-01", value: 1.8 }
   ],
-  retail_sales: [
-    { date: "2024-01-01", value: 2.1 },
-    { date: "2024-02-01", value: 2.0 },
-    { date: "2024-03-01", value: 1.9 },
-    { date: "2024-04-01", value: 1.8 },
-    { date: "2024-05-01", value: 1.7 },
-    { date: "2024-06-01", value: 1.8 },
-    { date: "2024-07-01", value: 1.9 },
-    { date: "2024-08-01", value: 2.0 },
-    { date: "2024-09-01", value: 2.1 },
-    { date: "2024-10-01", value: 2.0 },
-    { date: "2024-11-01", value: 2.0 },
-    { date: "2024-12-01", value: 2.1 }
+  high_yield_spread: [
+    { date: "2024-01-01", value: 3.9 },
+    { date: "2024-02-01", value: 4.0 },
+    { date: "2024-03-01", value: 4.1 },
+    { date: "2024-04-01", value: 4.0 },
+    { date: "2024-05-01", value: 4.0 },
+    { date: "2024-06-01", value: 4.2 },
+    { date: "2024-07-01", value: 4.3 },
+    { date: "2024-08-01", value: 4.4 },
+    { date: "2024-09-01", value: 4.3 },
+    { date: "2024-10-01", value: 4.2 },
+    { date: "2024-11-01", value: 4.2 },
+    { date: "2024-12-01", value: 4.1 }
+  ],
+  housing_starts_yoy: [
+    { date: "2024-01-01", value: -1.0 },
+    { date: "2024-02-01", value: -1.2 },
+    { date: "2024-03-01", value: -1.3 },
+    { date: "2024-04-01", value: -1.5 },
+    { date: "2024-05-01", value: -1.6 },
+    { date: "2024-06-01", value: -1.7 },
+    { date: "2024-07-01", value: -1.8 },
+    { date: "2024-08-01", value: -1.9 },
+    { date: "2024-09-01", value: -2.0 },
+    { date: "2024-10-01", value: -2.1 },
+    { date: "2024-11-01", value: -2.1 },
+    { date: "2024-12-01", value: -2.2 }
+  ],
+  permits_yoy: [
+    { date: "2024-01-01", value: -0.5 },
+    { date: "2024-02-01", value: -0.6 },
+    { date: "2024-03-01", value: -0.7 },
+    { date: "2024-04-01", value: -0.8 },
+    { date: "2024-05-01", value: -0.9 },
+    { date: "2024-06-01", value: -1.0 },
+    { date: "2024-07-01", value: -1.1 },
+    { date: "2024-08-01", value: -1.1 },
+    { date: "2024-09-01", value: -1.2 },
+    { date: "2024-10-01", value: -1.3 },
+    { date: "2024-11-01", value: -1.3 },
+    { date: "2024-12-01", value: -1.4 }
+  ],
+  home_price_yoy: [
+    { date: "2024-01-01", value: 4.2 },
+    { date: "2024-02-01", value: 4.3 },
+    { date: "2024-03-01", value: 4.4 },
+    { date: "2024-04-01", value: 4.5 },
+    { date: "2024-05-01", value: 4.6 },
+    { date: "2024-06-01", value: 4.7 },
+    { date: "2024-07-01", value: 4.7 },
+    { date: "2024-08-01", value: 4.8 },
+    { date: "2024-09-01", value: 4.9 },
+    { date: "2024-10-01", value: 4.9 },
+    { date: "2024-11-01", value: 5.0 },
+    { date: "2024-12-01", value: 5.0 }
+  ],
+  m2_yoy: [
+    { date: "2024-01-01", value: 1.2 },
+    { date: "2024-02-01", value: 1.3 },
+    { date: "2024-03-01", value: 1.4 },
+    { date: "2024-04-01", value: 1.5 },
+    { date: "2024-05-01", value: 1.6 },
+    { date: "2024-06-01", value: 1.7 },
+    { date: "2024-07-01", value: 1.7 },
+    { date: "2024-08-01", value: 1.8 },
+    { date: "2024-09-01", value: 1.8 },
+    { date: "2024-10-01", value: 1.9 },
+    { date: "2024-11-01", value: 1.9 },
+    { date: "2024-12-01", value: 2.0 }
+  ],
+  m2_velocity: [
+    { date: "2023-10-01", value: 1.2 },
+    { date: "2024-01-01", value: 1.21 },
+    { date: "2024-04-01", value: 1.22 },
+    { date: "2024-07-01", value: 1.23 },
+    { date: "2024-10-01", value: 1.24 }
   ]
 };
